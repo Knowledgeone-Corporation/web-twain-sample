@@ -1,0 +1,33 @@
+﻿@model ScanVM
+
+<div>
+    <div><h1>Scan Demo Page</h1></div>
+    <form id="formScanEntry" method="post" asp-action="Index">
+
+        <input type="hidden" asp-for="ClientID" class="form-control" />
+
+        <div><label>Name:</label></div>
+        <input asp-for="Name" class="form-control" />
+
+        <div style="margin-top:12px"><label>Title:</label></div>
+        <input asp-for="Title" class="form-control" />
+
+        <div style="margin-top:12px"><label>Scan Document:</label></div>
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button id="scanbtn" type="button" class="btn btn-default" aria-label="Bold">
+                    <span>Scan</span>
+                </button>
+            </div>
+            <input class="form-control filename" aria-label="Text input with multiple buttons">
+            <span class="input-group-addon filesize" style="display:none"></span>
+            <div class="input-group-btn fileview" style="display:none">
+                <button id="viewBtn" type="button" class="btn btn-default">View</button>
+            </div>
+        </div>
+
+        <div style="margin-top:12px">
+            <input id="saveBtn" type="submit" value="Save" class="btn btn-primary" disabled="disabled"/>
+        </div>
+    </form>
+</div>

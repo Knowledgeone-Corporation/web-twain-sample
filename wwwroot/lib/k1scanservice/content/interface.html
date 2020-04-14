@@ -1,0 +1,154 @@
+﻿<div class="k1ss-default">
+    <div class="k1ss-modal" id="k1ss_ModalScanInterface" style="display:none">
+    </div>
+    <div class="k1ss-modal-dialog" style="display:none">
+        <div class="k1ss-modal-body">
+            <div class="k1ss-left-col">
+                <div class="k1ss-group">
+                    <label>Select Source</label>
+                    <select class="k1ss-selectsource k1ss-control">
+                        <option value="" disabled="" selected="">Please select..</option>
+                    </select>
+                </div>
+
+                <div class="k1ss-group">
+                    <label>Page Placement</label>
+                    <select class="k1ss-pageplacement k1ss-control" style="width:100%">
+                        <option value="1" selected="selected">After Current Page</option>
+                        <option value="2">Before Current Page</option>
+                        <option value="3">Replace Current Page</option>
+                    </select>
+                </div>
+
+                <div class="k1ss-group k1ss-center">
+                    <input type="button" value="SCAN" class="k1ss-startscan k1ss-button" />
+                </div>
+
+                <div class="k1ss-lm-sep">
+                </div>
+
+                <div class="k1ss-group">
+                    <label>File Name</label>
+                    <input type="text" class="k1ss-filename k1ss-control" value="" />
+                </div>
+
+                <div class="k1ss-group">
+                    <label>File Type</label>
+                    <select class="k1ss-filetype k1ss-control">
+                        <option value="PDF" selected="">PDF</option>
+                        <option value="PDF/A" selected="">PDF/A</option>
+                        <option value="TIF">TIF</option>
+                        <option class="k1ss-single-ft" value="JPG">JPG</option>
+                        <option class="k1ss-single-ft" value="GIF">GIF</option>
+                        <option class="k1ss-single-ft" value="BMP">BMP</option>
+                        <option class="k1ss-single-ft" value="PNG">PNG</option>
+
+                    </select>
+                </div>
+
+                <div class="k1ss-ocr">
+                    <div class="k1ss-group k1ss-pdf">
+                        <label><input class="k1ss-chkocr" type="checkbox" /> OCR</label>
+                        <div class="k1ss-group-box">
+                            <label><input class="k1ss-radmapped" type="radio" name="k1ss_ocrtype" value="1" /> Mapped Text</label>
+                            <label><input class="k1ss-radembedded" type="radio" name="k1ss_ocrtype" value="2" /> Embedded Text</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="k1ss-group k1ss-center">
+                    <input type="button" value="ATTACH DOCUMENT" class="k1ss-attach k1ss-button k1ss-disabled" />
+                </div>
+                <div class="k1ss-license"></div>
+            </div>
+
+            <div class="k1ss-right-col">
+                <div class="k1ss-topBar">
+                    <a class="k1ss-rotatel k1ss-btn k1ss-disabled" title="Rotate Left"></a>
+                    <a class="k1ss-rotater k1ss-btn k1ss-disabled" title="Rotate Right"></a>
+                    <div class="k1ss-tbar-sep"></div>
+                    <a class="k1ss-fliph k1ss-btn k1ss-disabled" title="Flip Horizontally"></a>
+                    <a class="k1ss-flipv k1ss-btn k1ss-disabled" title="Flip Vertically"></a>
+                    <div class="k1ss-tbar-sep"></div>
+                    <a class="k1ss-cut k1ss-btn k1ss-disabled k1ss-tool-btn" title="Cut"></a>
+                    <a class="k1ss-redact k1ss-btn k1ss-disabled k1ss-tool-btn" title="Redact"></a>
+                    <div class="k1ss-tbar-sep"></div>
+                    <a class="k1ss-zoom-in k1ss-btn k1ss-disabled" title="Zoom In"></a>
+                    <a class="k1ss-zoom-out k1ss-btn k1ss-disabled" title="Zoom Out"></a>
+                    <a class="k1ss-zoom-reset k1ss-btn k1ss-disabled" title="Zoom Reset"></a>
+                    <div class="k1ss-tbar-sep"></div>
+                    <a class="k1ss-restore k1ss-btn k1ss-disabled" title="Restore Page"></a>
+                    <a class="k1ss-deleteimg k1ss-btn k1ss-disabled" title="Delete Page"></a>
+                    <a class="k1ss-deleteall k1ss-btn k1ss-disabled" title="Delete All Page(s)"></a>
+                    <button type="button" class="k1ss-close" title="Close Scanning Interface">&times;</button>
+                </div>
+
+                <div class="k1ss-document">
+                    <canvas class="k1ss-canvasview" style="cursor:grab"></canvas>
+                </div>
+
+                <div class="k1ss-move-page" style="display:none">
+                    <div class="k1ss-move-bg"></div>
+                    <div class="k1ss-msgbox">
+                        <div>
+                            <span>Select page number to move current page to:</span>
+                        </div>
+                        <div class="k1ss-mb-mt">
+                            <select class="k1ss-pageselect k1ss-control"></select>
+                        </div>
+                        <div class="k1ss-mb-mt">
+                            <a class="k1ss-confirmmove k1ss-button">OK</a>
+                            <a class="k1ss-cancelmove k1ss-button">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:none">
+                    <canvas class="k1ss-canvasfull" style="display:none" />
+                </div>
+
+                <div class="k1ss-btmBar">
+                    <a class="k1ss-pagefirst k1ss-btn k1ss-disabled" title="First Page"></a>
+                    <a class="k1ss-pageprev k1ss-btn k1ss-disabled" title="Previous Page"></a>
+                    <span class="k1ss-page">Page <span class="k1ss-currentpage">0</span> of <span class="k1ss-numpages">0</span></span>
+                    <a class="k1ss-pagenext k1ss-btn k1ss-disabled" title="Next Page"></a>
+                    <a class="k1ss-pagelast k1ss-btn k1ss-disabled" title="Last Page"></a>
+                    <a class="k1ss-print k1ss-btn k1ss-disabled k1ss-pright" title="Print Page"></a>
+                    <a class="k1ss-movepage k1ss-btn k1ss-disabled k1ss-pright" title="Move Page"></a>
+                    <div style="clear:both"></div>
+                </div>
+            </div>
+
+        </div>
+        <div style="clear:both"></div>
+    </div>
+    <div class="k1ss-modal-download" style="display:none">
+        <button type="button" class="k1ss-btn-canceldownload" title="Close Download Window">&times;</button>
+        <div>
+            In order to use the scanning interface, you must install a scanning service on your machine.
+            This local service allows the website to interact with your local scanning device(s).
+        </div>
+
+        <div class="k1ss-warning-box">
+            Once the download completes, you will need to manually run the installation file.
+            Follow the instructions in the installation to complete the setup and this window will
+            automatically close once complete.  If you do not have permission to run installation
+            files on this machine, please contact an administrator who can complete the process for
+            you.  If you do not wish to continue, press the close button in the top right corner.
+        </div>
+        <div style="text-align:center;margin:24px 0">
+            <a class="k1ss-button k1ss-download" href="" download>Download Now</a>
+        </div>
+    </div>
+    <div class="k1ss-wait-div" style="display:none">
+        <div class="k1ss-wait-bg"></div>
+        <div class="k1ss-msgbox">
+            <button type="button" class="k1ss-close k1ss-wait-close" style="display:none;float:right">&times;</button>
+            <div>
+                <span class="k1ss-msg">Loading, please wait...</span>
+            </div>
+            <div class="k1ss-mb-mt k1ss-progress">
+                <div class="k1ss-progress-bar" style="width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
