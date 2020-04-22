@@ -32,7 +32,7 @@ The onComplete callback will return the following object.
 {
     FileName:string - The filename the user assigned to the document
     FileLength:number - The total size of the file in bytes
-    SizeDisplay:string - The total size (as string – i.e. 12.1MB) of the final scanned document
+    SizeDisplay:string - The total size (as string â€“ i.e. 12.1MB) of the final scanned document
     Extension:string - The file type of the file (i.e. JPG, PDF, etc)
 }
 ```
@@ -40,4 +40,4 @@ The onComplete callback will return the following object.
 ## Licence
 The generated file will have a watermark.
 
-To purchase a licence....
+To purchase a licence please [contact us](https://webtwainsdk.com/contact-us/).
