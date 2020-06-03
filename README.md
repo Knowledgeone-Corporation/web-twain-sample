@@ -11,7 +11,7 @@ To run the demo either visit [https://demo.webtwainsdk.com/](https://demo.webtwa
 
 ### Installation
 * Copy and add references to the lib folder to your project.
-* Copy and add refrences to the site.js file to your project.
+* Copy and add references to the site.js file to your project.
 * Update the site.js settings:
   * __clientID__ : used to identify the current session.
   * __fileUploadURL__ : endpoint where the file will be posted to.
