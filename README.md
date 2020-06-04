@@ -1,7 +1,7 @@
 # Knowledgeone WebTWAIN
 Provides a webservice interface for interacting with a TWAIN compatible scanner.
 
-To run the demo either visit [https://demo.webtwainsdk.com/](https://demo.webtwainsdk.com/) or clone the repository and build the application locally.
+To run the demo either visit [https://webtwainsdk.com/demo-request/](https://webtwainsdk.com/demo-request/) or clone the repository and build the application locally.
 
 ## Getting Started
 
