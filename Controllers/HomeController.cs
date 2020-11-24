@@ -90,7 +90,15 @@ namespace SampleWebsiteNETCore.Controllers
 
         public IActionResult DownloadSetup()
         {
-            return File("~/files/K1ScanService.msi", "application/octet-stream", "K1ScanService.msi");
+            var userAgent = Request.Headers["User-Agent"].ToString();
+            if (userAgent.ToLower().Contains("mac os"))
+            {
+                return File("~/files/K1ScanService.pkg", "application/octet-stream", "K1ScanService.pkg");
+            }
+            else
+            {
+                return File("~/files/K1ScanService.msi", "application/octet-stream", "K1ScanService.msi");
+            }
         }
     }
 }
