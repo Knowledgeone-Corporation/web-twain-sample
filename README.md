@@ -1,7 +1,7 @@
 # Knowledgeone WebTWAIN
 Provides a webservice interface for interacting with a TWAIN compatible scanner.
 
-To run the demo either visit [https://demo.webtwainsdk.com/](https://demo.webtwainsdk.com/) or clone the repository and build the application locally.
+To run the demo either visit [https://webtwainsdk.com/demo-request/](https://webtwainsdk.com/demo-request/) or clone the repository and build the application locally.
 
 ## Getting Started
 
@@ -17,7 +17,7 @@ To run the demo either visit [https://demo.webtwainsdk.com/](https://demo.webtwa
   * __fileUploadURL__ : endpoint where the file will be posted to.
   * __onComplete__ : callback which will be invoked when the attach button has been clicked.
   * __setupFile__: endpoint where the service installer is located.
-  * __viewButton*__ : adds and event handler to download the file on click.
+  * __viewButton*__ : adds an event handler to download the file on click.
 
 \* These properties are optional.
 
