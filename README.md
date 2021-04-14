@@ -3,6 +3,8 @@ Provides a webservice interface for interacting with a TWAIN compatible scanner.
 
 To run the demo either visit [https://webtwainsdk.com/demo-request/](https://webtwainsdk.com/demo-request/) or clone the repository and build the application locally.
 
+If you have cloned the repository, you will need to visit [https://webtwainsdk.com/demo-request/](https://webtwainsdk.com/demo-request/) to download the required service.
+
 ## Getting Started
 
 ### Prerequisites
