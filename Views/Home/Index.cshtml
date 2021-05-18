@@ -15,7 +15,7 @@
         <div style="margin-top:12px"><label>Scan Document:</label></div>
         <div class="input-group">
             <div class="input-group-btn">
-                <button id="scanbtn" type="button" class="btn btn-default" aria-label="Bold">
+                <button id="scanbtn" type="button" class="btn btn-primary" aria-label="Bold">
                     <span>Scan</span>
                 </button>
             </div>
@@ -25,9 +25,12 @@
                 <button id="viewBtn" type="button" class="btn btn-default">View</button>
             </div>
         </div>
-
+        <div style="margin-top:12px;display:none;" id="uploadResponseDiv">
+            <div style="margin-top:12px"><label>Response from file upload route:</label></div>
+            <pre id="uploadResponseOutput"></pre>
+        </div>
         <div style="margin-top:12px">
-            <input id="saveBtn" type="submit" value="Save" class="btn btn-primary" disabled="disabled"/>
+            <input id="saveBtn" type="submit" value="Save" class="btn btn-primary" disabled="disabled" />
         </div>
     </form>
 </div>
