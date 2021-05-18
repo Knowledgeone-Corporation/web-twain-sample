@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="docs\api_reference\" />
     <Folder Include="wwwroot\uploads\" />
     <Folder Include="wwwroot\uploads\123\" />
   </ItemGroup>

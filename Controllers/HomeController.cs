@@ -79,7 +79,22 @@ namespace SampleWebsiteNETCore.Controllers
                 using FileStream fileStream = new FileStream(filePath, FileMode.Create);
                 file.CopyTo(fileStream);
             }
-            return Ok();
+
+            var docGuid = Guid.NewGuid();
+            var fileInfo = new
+            {
+                filename = file.FileName,
+                fileSize = file.Length
+            };
+
+            var response = new
+            {
+                info = fileInfo,
+                uniqueId = docGuid.ToString(),
+                uploadDate = DateTime.Now
+            };
+
+            return Ok(response);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,0 +1,429 @@
+openapi: 3.0.0
+info:
+  title: KnowledgeOne WebTwain SDK
+  description: The WebTwainSDK allows for interfacing with imaging devices connected to the client machine.
+  version: 1.3.0
+  contact:
+    name: KnowledgeOne Support  
+    url: https://webtwainsdk.com/contact-us/
+    email: support@knowledgeonecorp.com
+paths:
+  /InitService:
+    post:
+      summary: Initialises the service.
+      description: Starts a new session with the service. <br/> You will need to generate a unique identifer for the session, this will be used for subsequent calls. (e.g. the current time in ticks). <br/> This call will return the a collection of imaging devices, the version of the installed service and whether the OCR option is enabled.
+      parameters: 
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a ServiceData object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceData'
+                
+  /FetchVersion:
+    get:
+      summary: Returns the version of the service.
+      responses:
+        '200':
+          description: Returns a string value of the current version.
+          content:
+            application/json:
+              schema: 
+                type: string
+                description: Returns the version of the service installed on the user's machine.
+                example: 1.0.0
+                
+  /StartScan:
+    post:
+      summary: Starts a session with the selected imaging device.
+      description: Starts a session with the selected imaging device. <br/> The native scanning form for the selected device will be shown to the user. <br/> Once this method has been invoked you will need to poll CheckScanStatus to determine if the session has ended.
+      parameters: 
+        - $ref: '#/components/parameters/clientID'
+        - in: query
+          name: twainID
+          description: unique identifier of the imaging device
+          example: 5
+          schema: 
+            type: integer
+          required: true
+        - in: query
+          name: currentPage
+          description: the current page index
+          example: 3
+          schema: 
+            type: integer
+          required: true
+        - in: query
+          name: scanType
+          description: EnumScanType
+          example: 1
+          schema: 
+            $ref: '#/components/schemas/EnumScanType'
+          required: true
+      responses:
+        '200':
+          description: Returns current number of pages scanned.
+          content:
+            application/json:
+              schema:
+                type: integer
+                example: 3
+                description: the current number of pages scanned.
+  
+  /CheckScanStatus:
+    get:
+      summary: Checks if the current image acquisition session has completed.
+      description: Poll this method once a session has been instantiated with the scanner. <br/> The scanRunning property is set to false on completion. <br/> Return whether the native scanner is still running, if an error has been encountered and the total pages scanned.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a StatusMessage object.
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/StatusMessage'
+                
+  /GetPageCount:
+    get:
+      summary: Returns the total number of pages currently acquired.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns an integer value total number of pages acquired
+          content:
+            application/json:
+              schema: 
+                type: integer
+                description: a positive number
+                example: 8
+  
+  /GetPage:
+    get:
+      summary: Returns the image details at a specified index.
+      description: After successful image aquisition (CheckScanStatus), use this method to retrieve the page to be show the user. <br/> Returns The image is a base64 encoded string and the requested page.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - in: query
+          name: page
+          description: the page index
+          example: 3
+          schema: 
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Returns an ImageData object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ImageData'
+
+  /SavePage:
+    get:
+      summary: Saves any modifications made to the page.
+      description: Should be called if any changes have been applied to the source image (redacting|removed|rotating).
+      parameters:
+        - in: query
+          name: data
+          schema: 
+            $ref: '#/components/schemas/ImageData'
+          required: true
+      responses:
+        '200':
+          description: Returns whether the save was successful or not
+          content:
+            application/json:
+              schema: 
+                type: boolean
+                description: whether the save was successful
+                example: true
+                
+  /MovePage:
+    post:
+      summary: Moves the page from a specified index to another index.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - in: query
+          name: fromPage
+          description: the index of the page to be moved.
+          example: 1
+          schema: 
+            type: integer
+          required: true
+        - in: query
+          name: toPage
+          description: the index to be placed at in the document.
+          example: 5
+          schema: 
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Returns whether the page was moved or not
+          content:
+            application/json:
+              schema: 
+                type: boolean
+                description: whether the move was successful
+                example: true
+                
+  /DeletePage:
+    post:
+      summary: Deletes a page at the specified index.
+      description: This operation can not be reversed.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - in: query
+          name: page
+          description: the page index to delete
+          example: 3
+          schema: 
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Returns whether the page was deleted or not.
+          content:
+            application/json:
+              schema: 
+                type: boolean
+                description: whether the deletion was successful.
+                example: true
+                
+  /DeleteAllPages:
+    post:
+      summary: Deletes all the acquired pages from the imaging device.
+      description: This operation can not be reversed.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns whether the pages were deleted or not
+          content:
+            application/json:
+              schema: 
+                type: boolean
+                description: whether the deletion was successful.
+                example: true
+                
+  /AttachDocument:
+    get:
+      summary: Returns the file details of the generated file.
+      description: Generates a file with the supplied parameters. <br/> Returns the file details, including the filename, size and type. Also returns the response from the file upload route. <br/>If the ocrType is set to a non-zero value, you will need to poll the CheckOCRStatus request.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - in: query
+          name: filename
+          example: hello_world
+          description: the filename of the generated document
+          schema: 
+            type: string
+          required: true
+        - in: query
+          name: filetype
+          example: pdf
+          description: the output filetype.
+          schema: 
+            $ref: '#/components/schemas/FileTypes'
+          required: true
+        - in: query
+          name: ocrType
+          description: whether the document will be OCR'ed. (only available for pdf)
+          schema: 
+            $ref: '#/components/schemas/EnumOCRType'
+          required: true
+        - in: query
+          name: serverID
+          schema: 
+            type: string
+          description: unique identifer for the server
+          example: 1ae23-dd44d-ddsa33
+          required: true
+        - in: query
+          name: fileUploadURL
+          description: route where the file will be posted to by the service
+          example: https://localhost/app/home/uploadfile
+          schema: 
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Returns a FileData object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/FileData'
+                
+  /GetOcrProgress:
+    get:
+      summary: Checks if the OCR process has completed on the clients machine.
+      description: Poll this method if the AttachDocumentRequest has been invoked with a non-zeo value for the <b>ocrType</b>. <br/>Return whether the OCR process has completed and the current progress.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a OcrProgress object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/OcrProgress'
+
+  /GetOcrDocument:
+    get:
+      summary: Returns the file details of the generated file.
+      description: Retrieves the generated OCR'ed document. <br /> Invoke this method when the <b>completed</b> property of the GetOcrProgress is set to true <br/> Returns the file details, including the filename, size and type. Also returns the response from the file upload route.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a StatusMessage object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/FileData'
+
+components:
+  parameters:
+    clientID:
+      name: clientID
+      in: query
+      description: unique identifier for the session
+      required: true
+      schema:
+        type: integer
+      example: 1619662600769
+      
+  schemas:
+    EnumOCRType:
+      description: '0: NONE - document will be generated without OCR<br/>1: MAPPED - document will be generated with text mapped to the word<br/> 2: EMBEDDED - document will be generated with embedded text'
+      type: integer
+      enum:
+        - 0
+        - 1
+        - 2
+    EnumScanType:
+      description: '1: AFTER_PAGE - places the scanned page/s after the current page<br/>2: BEFORE_PAGE - places the scanned page/s before the current page<br/> 3: REPLACE_PAGE - replaces the current page with the scanned page/s'
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+    FileTypes:
+      type: string
+      enum:
+        - gif
+        - jpg
+        - png
+        - bmp
+        - tif
+        - pdf
+    FileData:
+      type: object
+      properties:
+        filename:
+          type: string
+          description: output filename
+          example: hello_world.pdf
+        fileLength:
+          type: integer
+          description: file size in bytes
+          example: 12800
+        sizeDisplay:
+          type: string
+          example: 12.5 MB
+          description: converted file size
+        extension:
+          type: string
+          description: file type extension
+          example: .pdf
+        hasOcrRequest:
+          type: boolean
+          description: whether the document was requested to be OCR'ed
+          example: true
+        uploadResponse:
+          type: object
+          description: response returned from the file upload route 
+          example: null
+    StatusMessage:
+      type: object
+      properties:
+        scanRunning:
+          type: boolean
+          description: whether the imaging device is in a sessions and capturing
+          example: true
+        success:
+          type: boolean
+          description: whether an error has been encountered by the imaging device.
+          example: true
+        message:
+          type: string
+          description: the error message if the scanner encountered an error.
+          example: document feeder is empty
+        pageCount:
+          type: integer
+          description: total pages scanned
+          example: 5
+    ImageData:
+      type: object
+      properties:
+        clientID:
+          type: integer
+          description: unique identifier for the session
+          example: 1619662600769
+        page:
+          description: the current page index
+          type: integer
+          example: 3
+        image:
+          type: string
+          description: base64 encoded string
+    Source:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: unique identifier of the imaging device
+          example: 12
+        name:
+          type: string
+          description: name of the imaging device
+          example: CanonScan Lide 110
+        isDefault:
+          type: boolean
+          description: whether the imaging device has been set as default on the user's machine
+          example: true
+    OcrProgress:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: current page being processed
+          example: 3
+        totalPages:
+          type: integer
+          description: total pages in the document to be processed
+          example: 5
+        completed:
+          type: boolean
+          description: whether the OCR process has completed
+          example: true
+    ServiceData:
+      type: object
+      properties:
+        sourceList:
+          description: a collection containing the imaging devices available on the user's machine
+          type: array
+          items: 
+            $ref: "#/components/schemas/Source"
+        useOcr:
+          description: whether OCR is enabled on the user interface
+          type: boolean
+          example: true
+        version:
+          description: the version of the service installed on the user's machine.
+          type: string
+          example: 1.0.0
