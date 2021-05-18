@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="docs\api_reference\**" />
+    <Content Remove="docs\api_reference\**" />
+    <EmbeddedResource Remove="docs\api_reference\**" />
+    <None Remove="docs\api_reference\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="bundleconfig.json" />
   </ItemGroup>
 
@@ -14,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="docs\api_reference\" />
     <Folder Include="wwwroot\uploads\" />
     <Folder Include="wwwroot\uploads\123\" />
   </ItemGroup>

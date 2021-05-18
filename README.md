@@ -14,10 +14,10 @@ If you have cloned the repository, you will need to visit [https://webtwainsdk.c
 ### Usage
 
 #### Provided Component
-To use the provided component please refer to the [component documentation](./docs/component.md).
+To use the provided component please refer to the [component documentation](./docs/reference/component.md).
 
 #### API Reference
-To consume the REST API please refer to the [API documentation](./docs/service.md)
+To consume the REST API please refer to the [API documentation](./docs/reference/service.md)
 
 ## Licence
 The generated file will have a watermark.
