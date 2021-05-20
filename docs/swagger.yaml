@@ -345,7 +345,7 @@ components:
           description: whether the document was requested to be OCR'ed
           example: true
         uploadResponse:
-          type: object
+          type: string
           description: response returned from the file upload route 
           example: null
     StatusMessage:
