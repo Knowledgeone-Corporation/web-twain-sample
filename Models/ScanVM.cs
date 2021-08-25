@@ -9,7 +9,7 @@ namespace SampleWebsiteNETCore.Models
     {
         public string Name { get; set; }
         public string Title { get; set; }
-
         public string ClientID { get; set; }
+        public string SelectedInterface { get; set; }
     }
 }

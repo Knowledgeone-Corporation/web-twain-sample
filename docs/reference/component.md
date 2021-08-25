@@ -24,27 +24,97 @@
 <script src="~/lib/k1scanservice/js/k1ss.js"></script>
 <link rel="stylesheet" href="~/lib/k1scanservice/css/k1ss.min.css" />
 ```
-3. Bind the component to a HTML element, by invoking the k1scanservice.  
-(The .k1scanservice method will add an onClick event which will initialise and display the webtwain interface when the DOM component is clicked).
+3. Invoke **K1WebTwain.Configure** to instatiate the service.
 ```javascript
-$(function () {
-    $('#scanbtn').k1scanservice({
-        onComplete: K1ScanServiceComplete,
-        viewButton: $("#viewBtn"),
-        fileUploadURL: "",
-        clientID: 0,
-        setupFile: "",
-        version: "",
-        interfacePath: "",
-    });
-});
+var configuration = {
+    onComplete: K1ScanServiceComplete,
+    viewButton: $(".k1ViewBtn"),
+    scanButton: $("#scanbtn"),
+    fileUploadURL: "",
+    clientID: 0,
+    setupFile: "",
+    interfacePath: "", 
+    scannerInterface: K1WebTwain.Options.ScannerInterface.Visible,
+};
 
-function K1ScanServiceComplete(OnCompleteData) {
-    console.log(OnCompleteData);
-}
+K1WebTwain.Configure(configuration)
+    .then(function(response){
+        ...
+    })
+    .catch(function(err){
+        ...
+    });
+```
+4. Please follow the steps outlined by the selected **scannerInterface** value. If an value is not provided it will default to **K1WebTwain.Options.ScannerInterface.Visible**
+#### K1WebTwain.Options.ScannerInterface.None
+1. Invoke **K1WebTwain.GetDevices** to get a list of available devices.
+```javascript
+K1WebTwain.GetDevices()
+    .then(function(devices){
+        ...
+    })
+    .catch(function(err){
+        ...
+    });
+```
+2. Invoke **K1WebTwain.Acquire** to start scan and generate a document with the provided request.
+```javascript
+var request = {
+    deviceId: 0,
+    resolutionId: 0,
+    pixelTypeId: 0,
+    pageSizeId: 0,
+    documentSourceId: 0,
+    duplexId: 0,
+    filetype: K1WebTwain.Options.OutputFiletype.PDF,
+    ocrType: K1WebTwain.Options.OcrType.None,
+    filename: "test",
+};
+
+K1WebTwain.Acquire(request)
+    .then(function(response){
+        ...
+    })
+    .catch(function(err){
+        ...
+    });
 ```
 
-### Component Properties
+#### K1WebTwain.Options.ScannerInterface.Desktop
+1. Invoke **K1WebTwain.GetDevices** to get a list of available devices.
+```javascript
+K1WebTwain.GetDevices()
+    .then(function(devices){
+        ...
+    })
+    .catch(function(err){
+        ...
+    });
+```
+2. Invoke **K1WebTwain.Acquire** to start scan and generate a document with the provided request.
+```javascript
+var request = {
+    deviceId: 0,
+    filetype: K1WebTwain.Options.OutputFiletype.PDF,
+    ocrType: K1WebTwain.Options.OcrType.None,
+    filename: "test",
+};
+
+K1WebTwain.Acquire(request)
+    .then(function(response){
+        ...
+    })
+    .catch(function(err){
+        ...
+    });
+```
+#### K1WebTwain.Options.ScannerInterface.Visible
+- No additional actions are needed. The modal will be shown when the supplied scanButton is clicked.
+#### K1WebTwain.Options.ScannerInterface.Web
+- No additional actions are needed. The modal will be shown when the supplied scanButton is clicked.
+
+
+### Configuration Properties
 
 #### onComplete
 **type:** function  
@@ -57,6 +127,13 @@ function K1ScanServiceComplete(OnCompleteData) {
 **type:** HTML element  
 **required:** false  
 **description:** Adds an onClick event to the element. This event fires a GetDocument HTTPRequest  
+**example:**  
+> $("#viewBtn")
+
+#### viewButton
+**type:** HTML element  
+**required:** false  
+**description:** Adds an onClick event to the element. This event launches the scanner modal. 
 **example:**  
 > $("#viewBtn")
 
@@ -81,13 +158,6 @@ function K1ScanServiceComplete(OnCompleteData) {
 **example:** 
 > document.location.origin + '/Home/DownloadSetup' [Sample Route](https://github.com/Knowledgeone-Corporation/web-twain-sample/blob/50b9f1cdcd9332528485034a3c26b888d374b160/Controllers/HomeController.cs#L91)
 
-#### version
-**type:** string  
-**required:** false  
-**description:** Override the service version. Update this to load a previous version.  
-**example:**  
-> 1.0.2
-
 #### interfacePath
 **type:** string  
 **required:** false  
@@ -95,6 +165,14 @@ function K1ScanServiceComplete(OnCompleteData) {
 *Please note: The default path is set to "\{document.location.origin}/lib/k1scanservice/content/interface.html"*  
 **example:**  
 > http://localhost/lib/k1scanservice/content/interface.html
+
+#### interfacePath
+**type:** K1WebTwain.Options.ScannerInterface  
+**required:** false  
+**description:** Sets the type of interface used to interact with the image aquisition device.  
+*Please note: This will default to K1WebTwain.Options.ScannerInterface.Visible if not set*  
+**example:**  
+> K1WebTwain.Options.ScannerInterface.None
 
 ### Schemas
 

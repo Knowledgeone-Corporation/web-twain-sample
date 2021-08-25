@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: KnowledgeOne WebTwain SDK
   description: The WebTwainSDK allows for interfacing with imaging devices connected to the client machine.
-  version: 1.3.0
+  version: 2.0.0
   contact:
     name: KnowledgeOne Support  
     url: https://webtwainsdk.com/contact-us/
@@ -21,7 +21,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceData'
-                
+
+  /ServiceAvailable:
+    get:
+      summary: Returns HTTP200 OK if the service is available.
+      description: Returns HTTP200 OK if the service is available.
+      response:
+        '200':
+          description: The service is available.
+
   /FetchVersion:
     get:
       summary: Returns the version of the service.
@@ -30,38 +38,18 @@ paths:
           description: Returns a string value of the current version.
           content:
             application/json:
-              schema: 
-                type: string
-                description: Returns the version of the service installed on the user's machine.
-                example: 1.0.0
+              schema:
+               - $ref: '#/components/schemas/FetchVersion'
                 
   /StartScan:
     post:
       summary: Starts a session with the selected imaging device.
       description: Starts a session with the selected imaging device. <br/> The native scanning form for the selected device will be shown to the user. <br/> Once this method has been invoked you will need to poll CheckScanStatus to determine if the session has ended.
-      parameters: 
-        - $ref: '#/components/parameters/clientID'
-        - in: query
-          name: twainID
-          description: unique identifier of the imaging device
-          example: 5
-          schema: 
-            type: integer
-          required: true
-        - in: query
-          name: currentPage
-          description: the current page index
-          example: 3
-          schema: 
-            type: integer
-          required: true
-        - in: query
-          name: scanType
-          description: EnumScanType
-          example: 1
-          schema: 
-            $ref: '#/components/schemas/EnumScanType'
-          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartScan"
       responses:
         '200':
           description: Returns current number of pages scanned.
@@ -214,42 +202,11 @@ paths:
     get:
       summary: Returns the file details of the generated file.
       description: Generates a file with the supplied parameters. <br/> Returns the file details, including the filename, size and type. Also returns the response from the file upload route. <br/>If the ocrType is set to a non-zero value, you will need to poll the CheckOCRStatus request.
-      parameters:
-        - $ref: '#/components/parameters/clientID'
-        - in: query
-          name: filename
-          example: hello_world
-          description: the filename of the generated document
-          schema: 
-            type: string
-          required: true
-        - in: query
-          name: filetype
-          example: pdf
-          description: the output filetype.
-          schema: 
-            $ref: '#/components/schemas/FileTypes'
-          required: true
-        - in: query
-          name: ocrType
-          description: whether the document will be OCR'ed. (only available for pdf)
-          schema: 
-            $ref: '#/components/schemas/EnumOCRType'
-          required: true
-        - in: query
-          name: serverID
-          schema: 
-            type: string
-          description: unique identifer for the server
-          example: 1ae23-dd44d-ddsa33
-          required: true
-        - in: query
-          name: fileUploadURL
-          description: route where the file will be posted to by the service
-          example: https://localhost/app/home/uploadfile
-          schema: 
-            type: string
-          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttachDocument"
       responses:
         '200':
           description: Returns a FileData object
@@ -312,6 +269,15 @@ components:
         - 1
         - 2
         - 3
+    InterfaceType:
+      description: '0: Hidden - No interfaces are shown<br/>1: Visible - Both interfaces are shown<br/>2: WebOnly - Only the web interface is shown<br/>3:TwainOnly - Only the desktop interface is shown'
+      type: integer
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+
     FileTypes:
       type: string
       enum:
@@ -427,3 +393,77 @@ components:
           description: the version of the service installed on the user's machine.
           type: string
           example: 1.0.0
+    FetchVersion:
+      type: object
+      properties:
+        version:
+          description: The version of the installed service.
+          type: string
+          example: 1.0.0
+    StartScan:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        twainID:
+          type: integer
+          description: the selectd image acquisition device.
+          example: 1
+        currentPage:
+          type: integer
+          description: the current page in the doucment.
+          example: 1
+        pixelTypeID:
+          type: integer
+          description: id to select the pixel type.
+          example: 1
+        resolutionID:
+          type: integer
+          description: id to select the resoltion.
+          example: 1
+        pageSizeID:
+          type: integer
+          description: id to selct the page size.
+          example: 1
+        duplexID:
+          type: integer
+          description: id to select the duplex option.
+          example: 1
+        documentSourceID:
+          type: integer
+          description: id to select the document source.
+          example: 1
+        interfaceType:
+          type: integer
+          $ref: "#/components/schemas/InterfaceType"
+          example: 1
+        scanType:
+          type: integer
+          $ref: "#/components/schemas/EnumScanType"
+          example: 1
+    AttachDocument:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        filename:
+          type: string
+          description: the filename of the generated document
+          example: hello_world
+        filetype:
+          type: string
+          $ref: '#/components/schemas/FileTypes'
+          description: the output filetype.
+          example: PDF
+        ocrType:
+          type: integer
+          description: whether the document will be OCR'ed. (only available for pdf)
+          $ref: '#/components/schemas/EnumOCRType'
+        serverID:
+          type: integer
+          description: unique identifer for the server.
+          example: 1ae23-dd44d-ddsa33
+        fileUploadURL:
+          type: string
+          description: route where the file will be posted to by the service
+          example: 1
