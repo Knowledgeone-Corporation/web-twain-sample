@@ -16,6 +16,8 @@ If you have cloned the repository, you will need to visit [https://webtwainsdk.c
 #### Provided Component
 To use the provided component please refer to the [component documentation](./docs/reference/component.md).
 
+Legacy documentation (prior to version 2.0.0) please refer to the [component documentation](./docs/reference/component_legacy.md).
+
 #### API Reference
 To consume the REST API please refer to the [API documentation](./docs/reference/service.md)
 

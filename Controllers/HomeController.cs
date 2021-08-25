@@ -28,7 +28,8 @@ namespace SampleWebsiteNETCore.Controllers
             {
                 ClientID = "123",
                 Name = "Test Name",
-                Title = "Test Title"
+                Title = "Test Title",
+                SelectedInterface = Request.Query.ContainsKey("InterfaceType") ? (string)Request.Query["InterfaceType"] : "",
             };
 
             return View(model);

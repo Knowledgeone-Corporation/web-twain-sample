@@ -2,35 +2,122 @@
 
 <div>
     <div><h1>Scan Demo Page</h1></div>
+    <div class="alert alert-info alert-dismissible show" role="alert">
+        <strong>Note: </strong>The demonstration service has the following limitations;
+        - generated documents contain a watermark,
+        - multi-page documents are limited to 10 pages,
+        - OCR is limited to the first page of the document.
+        These limitations are not present in the licensed product.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     <form id="formScanEntry" method="post" asp-action="Index">
-
         <input type="hidden" asp-for="ClientID" class="form-control" />
+        <input type="hidden" asp-for="SelectedInterface" class="form-control" />
 
-        <div><label>Name:</label></div>
-        <input asp-for="Name" class="form-control" />
-
-        <div style="margin-top:12px"><label>Title:</label></div>
-        <input asp-for="Title" class="form-control" />
-
-        <div style="margin-top:12px"><label>Scan Document:</label></div>
-        <div class="input-group">
-            <div class="input-group-btn">
-                <button id="scanbtn" type="button" class="btn btn-primary" aria-label="Bold">
-                    <span>Scan</span>
-                </button>
-            </div>
-            <input class="form-control filename" aria-label="Text input with multiple buttons">
-            <span class="input-group-addon filesize" style="display:none"></span>
-            <div class="input-group-btn fileview" style="display:none">
-                <button id="viewBtn" type="button" class="btn btn-default">View</button>
+        <div class="form-group">
+            <label>Interface Option</label>
+            <div>
+                <select id="interface-option-dropdown" class="form-control">
+                    <option disabled selected>Please select...</option>
+                    <option value="0">Hidden</option>
+                    <option value="1">Visible</option>
+                    <option value="2">Web</option>
+                    <option value="3">Desktop</option>
+                </select>
             </div>
         </div>
-        <div style="margin-top:12px;display:none;" id="uploadResponseDiv">
-            <div style="margin-top:12px"><label>Response from file upload route:</label></div>
+        <div id="k1interface-visible" class="hide">
+            <div><label>Name:</label></div>
+            <input asp-for="Name" class="form-control" />
+
+            <div style="margin-top:12px"><label>Title:</label></div>
+            <input asp-for="Title" class="form-control" />
+
+            <div style="margin-top:12px"><label>Scan Document:</label></div>
+            <div class="input-group">
+                <div class="input-group-btn">
+                    <button id="scanbtn" type="button" class="btn btn-primary" aria-label="Bold">
+                        <span>Scan</span>
+                    </button>
+                </div>
+                <input class="form-control filename" aria-label="Text input with multiple buttons">
+                <span class="input-group-addon filesize" style="display:none"></span>
+                <div class="input-group-btn fileview" style="display:none">
+                    <button id="viewBtn" type="button" class="btn btn-default k1ViewBtn">View</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="k1interface-hidden" class="hide">
+            <div>
+                <div id="device-group" class="twain-feature-group" style="display: none;">
+                    <label>Device</label>
+                    <select id="sel-scanner" class="form-control"></select>
+                </div>
+
+                <div id="source-group" class="twain-feature-group" style="display: none;">
+                    <label>Document Source</label>
+                    <select id="sel-document-source" class="form-control"></select>
+                </div>
+
+                <div id="dpi-group" class="twain-feature-group" style="display: none;">
+                    <label>Resolution (DPI)</label>
+                    <select id="sel-dpi" class="form-control"></select>
+                </div>
+
+                <div id="color-group" class="twain-feature-group" style="display: none;">
+                    <label>Color</label>
+                    <select id="sel-color" class="form-control"></select>
+                </div>
+
+                <div id="size-group" class="twain-feature-group" style="display: none;">
+                    <label>Page Size</label>
+                    <select id="sel-page-size" class="form-control"></select>
+                </div>
+
+                <div id="duplex-group" class="twain-feature-group" style="display: none;">
+                    <label>Duplex</label>
+                    <select id="sel-duplex" class="form-control"></select>
+                </div>
+
+                <label>Output File Name</label>
+                <input id="sel-output-name" class="form-control" type="text" placeholder="Please enter a file name">
+
+                <label>Output File Type</label>
+                <select id="sel-output" class="form-control"></select>
+
+                <label>OCR Type</label>
+                <select id="sel-ocr-type" class="form-control"></select>
+
+                <div class="input-group" style="margin-top:12px">
+                    <div class="input-group-btn">
+                        <button id="btn-acquire" type="button" class="btn btn-primary" aria-label="Bold">
+                            <span>Scan</span>
+                        </button>
+                    </div>
+                    <input class="form-control filename" aria-label="Text input with multiple buttons">
+                    <span class="input-group-addon filesize" style="display:none"></span>
+                    <div class="input-group-btn fileview" style="display:none">
+                        <button id="viewBtn2" type="button" class="btn btn-default k1ViewBtn">View</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-success" style="margin-top:12px;display:none;" id="uploadResponseDiv">
+            <div style="margin-top:12px">
+                <label>Response from file upload route:</label>
+            </div>
             <pre id="uploadResponseOutput"></pre>
         </div>
-        <div style="margin-top:12px">
-            <input id="saveBtn" type="submit" value="Save" class="btn btn-primary" disabled="disabled" />
+
+        <div class="alert alert-danger" style="margin-top: 12px; display: none;" id="errorMessageDiv">
+            <div>
+                <label>Error</label>
+            </div>
+            <pre id="errorMessageOutput"></pre>
         </div>
     </form>
 </div>
