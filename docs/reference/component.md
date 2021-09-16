@@ -166,7 +166,7 @@ K1WebTwain.Acquire(request)
 **example:**  
 > http://localhost/lib/k1scanservice/content/interface.html
 
-#### interfacePath
+#### scannerInterface
 **type:** K1WebTwain.Options.ScannerInterface  
 **required:** false  
 **description:** Sets the type of interface used to interact with the image aquisition device.  
