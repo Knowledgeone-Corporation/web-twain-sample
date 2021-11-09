@@ -1,4 +1,48 @@
 ## Knowledgeone WebTWAIN Release Notes
+
+### Version 2.1.0
+- This release brings feature parity for macOS. 
+- Updated to use the loopback address instead of localhost. [Private network access update](https://developer.chrome.com/blog/private-network-access-update/)
+
+#### Service
+- AttachDocument has been updated to POST.
+- Updated device model. Device features now appear under the documentSourceId.  
+This corrects an issue for combo-scanners where certain features are not present in a given source.
+
+``` json
+{
+	"0": {
+		"id": 1,
+		"name": "CanoScan LiDE 110",
+		"isDefault": true,
+		"documentSourceIds": {
+			"0": {
+				"name": "Flatbed",
+				"id": 0,
+				"resolutionIds": {
+					"50": "75",
+					"75": "100",
+				},
+				"pixelTypeIds": {
+					"0": "BW",
+					"1": "Gray",
+					"2": "RGB"
+				},
+				"pageSizeIds": {
+					"1": "A4",
+					"2": "JISB5",
+				},
+				"duplexIds": {}
+			}
+		}
+	}
+}
+```
+
+#### Issues fixed in this release
+- DuplexIds returned an empty collection when the feature was present on the scanner device.
+- Error messages when invoking acquire were sometimes not being returned.
+
 ### Version 2.0.0
 
 #### Component
