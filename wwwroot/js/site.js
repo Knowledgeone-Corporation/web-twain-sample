@@ -138,12 +138,20 @@ function BindAcquire() {
                 $("#uploadResponseOutput").text(JSON.stringify(data.uploadResponse, null, 4));
                 $("#uploadResponseDiv").show();
             })
-            .catch(x => {
+            .catch(function (x) {
                 console.error(x);
 
-                try {
-                    $("#errorMessageOutput").text(JSON.stringify(x.responseJSON, null, 4));
-                } catch (e) {
+                if (!!x.responseJSON) {
+                    try {
+                        $("#errorMessageOutput").text(JSON.stringify(x.responseJSON, null, 4));
+                    } catch (e) {
+                        if (!!x.responseText) {
+                            $("#errorMessageOutput").text(x.responseText);
+                        }
+                    }
+                }
+
+                if (!!x.responseText) {
                     $("#errorMessageOutput").text(x.responseText);
                 }
 
@@ -193,16 +201,70 @@ function BindScannerSelection(devices) {
             return;
         }
 
-        var pixelOptions = device.pixelTypeIds;
-        var resolutionOptions = device.resolutionIds;
-        var pageSizeOptions = device.pageSizeIds;
-        var documentSourceOptions = device.documentSourceIds;
-        var duplexOptions = device.duplexIds;
+        populate_feature($("#sel-color"), {});
+        populate_feature($("#sel-dpi"), {});
+        populate_feature($("#sel-page-size"), {});
+        populate_feature($("#sel-duplex"), {});
+
+        BindDocumentSource(device.documentSourceIds)
+    });
+}
+
+function BindDocumentSource(documentSources) {
+    console.log(documentSources);
+
+    var $scanner_dropdown = InitialiseDropDown($("#sel-document-source"));
+
+    for (var prop in documentSources) {
+        $scanner_dropdown.append($("<option />")
+            .val(documentSources[prop].id)
+            .text(documentSources[prop].name));
+    }
+
+    $scanner_dropdown.parent().show();
+
+    $("#sel-document-source").unbind();
+    $("#sel-document-source").change(function (y) {
+        var populate_feature = function ($dropdown, dict) {
+            InitialiseDropDown($dropdown);
+
+            var isEmpty = jQuery.isEmptyObject(dict);
+
+            if (isEmpty) {
+                $dropdown.parent().hide();
+                return;
+            }
+
+            for (var prop in dict) {
+                $dropdown.append($("<option />")
+                    .val(prop)
+                    .text(dict[prop]));
+            }
+
+            $dropdown.parent().show();
+        };
+
+        var selection = $("#sel-document-source").val();
+
+        if (!selection) {
+            return;
+        }
+
+        var deviceSelection = $("#sel-scanner").val();
+        var device = K1WebTwain.Device(deviceSelection);
+
+        if (!device) {
+            return;
+        }
+
+        var pixelOptions = device.documentSourceIds[selection].pixelTypeIds;
+        var resolutionOptions = device.documentSourceIds[selection].resolutionIds;
+        var pageSizeOptions = device.documentSourceIds[selection].pageSizeIds;
+        var duplexOptions = device.documentSourceIds[selection].duplexIds;
 
         populate_feature($("#sel-color"), pixelOptions);
         populate_feature($("#sel-dpi"), resolutionOptions);
         populate_feature($("#sel-page-size"), pageSizeOptions);
-        populate_feature($("#sel-document-source"), documentSourceOptions);
         populate_feature($("#sel-duplex"), duplexOptions);
     });
 }

@@ -53,19 +53,53 @@
 **description:** dictionary of devices, keyed by index.  
 ```json
 {
-    0:{
-        documentSourceIds: {0: "Flatbed"},
-        duplexIds: {},
-        id: 1,
-        isDefault: true,
-        name: "CanoScan LiDE 110",
-        pageSizeIds: {0: "None", 1: "A4", 2: "JISB5", 3: "USLetter"},
-        pixelTypeIds: {0: "BW", 1: "Gray", 2: "RGB"},
-        resolutionIds: {50: "75", 75: "100", 125: "150"},
-    },
-    1:{
-        ...
-    },
+   "2":{
+      "id":2,
+      "name":"Samsung SCX-4623 Series",
+      "isDefault":true,
+      "documentSourceIds":{
+         "0":{
+            "name":"Flatbed",
+            "id":0,
+            "resolutionIds":{
+               "0":"75",
+               "1":"100",
+               "2":"150"
+            },
+            "pixelTypeIds":{
+               "0":"BW"
+            },
+            "pageSizeIds":{
+               "0":"USLetter",
+               "1":"USExecutive",
+               "2":"USStatement"
+            },
+            "duplexIds":{
+               
+            }
+         },
+         "1":{
+            "name":"Feeder",
+            "id":1,
+            "resolutionIds":{
+               "0":"75",
+               "1":"100",
+               "2":"150"
+            },
+            "pixelTypeIds":{
+               "0":"BW"
+            },
+            "pageSizeIds":{
+               "0":"USLetter",
+               "1":"USLegal",
+               "2":"USExecutive"
+            },
+            "duplexIds":{
+               "8":"None"
+            }
+         }
+      }
+   }
 }
 ```
 ---
@@ -84,14 +118,49 @@
 **description:** the device object  
 ```json
 {
-    documentSourceIds: {0: "Flatbed"},
-    duplexIds: {},
-    id: 1,
-    isDefault: true,
-    name: "CanoScan LiDE 110",
-    pageSizeIds: {0: "None", 1: "A4", 2: "JISB5", 3: "USLetter"},
-    pixelTypeIds: {0: "BW", 1: "Gray", 2: "RGB"},
-    resolutionIds: {50: "75", 75: "100", 125: "150"},
+  "id": 2,
+  "name": "Samsung SCX-4623 Series",
+  "isDefault": true,
+  "documentSourceIds": {
+    "0": {
+      "name": "Flatbed",
+      "id": 0,
+      "resolutionIds": {
+        "0": "75",
+        "1": "100",
+        "2": "150"
+      },
+      "pixelTypeIds": {
+        "0": "BW"
+      },
+      "pageSizeIds": {
+        "0": "USLetter",
+        "1": "USExecutive",
+        "2": "USStatement"
+      },
+      "duplexIds": {}
+    },
+    "1": {
+      "name": "Feeder",
+      "id": 1,
+      "resolutionIds": {
+        "0": "75",
+        "1": "100",
+        "2": "150"
+      },
+      "pixelTypeIds": {
+        "0": "BW"
+      },
+      "pageSizeIds": {
+        "0": "USLetter",
+        "1": "USLegal",
+        "2": "USExecutive"
+      },
+      "duplexIds": {
+        "8": "None"
+      }
+    }
+  }
 }
 ```
 ---
