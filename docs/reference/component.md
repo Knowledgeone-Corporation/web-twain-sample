@@ -130,12 +130,12 @@ K1WebTwain.Acquire(request)
 **example:**  
 > $("#viewBtn")
 
-#### viewButton
+#### scanButton
 **type:** HTML element  
 **required:** false  
 **description:** Adds an onClick event to the element. This event launches the scanner modal. 
 **example:**  
-> $("#viewBtn")
+> $("#scanBtn")
 
 #### fileUploadURL
 **type:** object  
