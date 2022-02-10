@@ -133,7 +133,7 @@ K1WebTwain.Acquire(request)
 #### scanButton
 **type:** HTML element  
 **required:** false  
-**description:** Adds an onClick event to the element. This event launches the scanner modal. 
+**description:** Adds an onClick event to the element. This event launches the scanner modal.  
 **example:**  
 > $("#scanBtn")
 
