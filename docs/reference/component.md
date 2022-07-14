@@ -45,6 +45,21 @@ K1WebTwain.Configure(configuration)
         ...
     });
 ```
+
+Note that in some circumstances it may be necessary to include a reset to clear certain errors in the Webtwain service at the time of the configure.  Do this as follows
+```javascript
+K1WebTwain.Configure(configuration)
+    .then(function(response){
+        ...
+        K1WebTwain.ResetService();
+    })
+    .catch(function(err){
+        ...
+        K1WebTwain.ResetService();
+    })
+```
+This is only required for Windows version of WebTwain Scanner Service where scanners may initially appear but are subsequently unavailable.   The call is supported on MacOS but performs no function on that platform.
+
 4. Please follow the steps outlined by the selected **scannerInterface** value. If an value is not provided it will default to **K1WebTwain.Options.ScannerInterface.Visible**
 #### K1WebTwain.Options.ScannerInterface.None
 1. Invoke **K1WebTwain.GetDevices** to get a list of available devices.
