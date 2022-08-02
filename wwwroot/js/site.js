@@ -1,5 +1,9 @@
-﻿$(document).ready(function () {
+$(document).ready(function () {
+    InitialiseToastr();
+    InitialiseInterfaceOption();
+
     $("#interface-option-dropdown").change(function (x) {
+
         $("#errorMessageDiv").hide();
         $(".twain-feature-group").hide();
 
@@ -19,38 +23,59 @@
 
         K1WebTwain.Configure(configuration)
             .then(function (result) {
-                switch (result.scannerInterface) {
-                    case K1WebTwain.Options.ScannerInterface.Visible:
-                    case K1WebTwain.Options.ScannerInterface.Web:
-                        $("#k1interface-visible").removeClass("hide");
-                        $("#k1interface-hidden").addClass("hide");
-                        break;
-                    case K1WebTwain.Options.ScannerInterface.Hidden:
-                        RenderSelection();
-                        $("#k1interface-visible").addClass("hide");
-                        $("#k1interface-hidden").removeClass("hide");
-                        break;
-                    case K1WebTwain.Options.ScannerInterface.Desktop:
-                        RenderDesktopSelection();
-                        $("#k1interface-visible").addClass("hide");
-                        $("#k1interface-hidden").removeClass("hide");
-                        break;
-                    default:
-                        break;
-                }
+                $("#btn-acquire").show();
+                $("#scanbtn").show();
+                $(".alert").hide();
+                $("#k1interface-visible").addClass("hide");
+                $("#k1interface-hidden").addClass("hide");
+                K1WebTwain.ResetService().then(function () {
+                    setTimeout(() => {
+                        switch (result.scannerInterface) {
+                            case K1WebTwain.Options.ScannerInterface.Visible:
+                            case K1WebTwain.Options.ScannerInterface.Web:
+                                $("#k1interface-visible").removeClass("hide");
+                                $("#k1interface-hidden").addClass("hide");
+                                break;
+                            case K1WebTwain.Options.ScannerInterface.Hidden:
+                                RenderSelection();
+                                $("#k1interface-visible").addClass("hide");
+                                $("#k1interface-hidden").removeClass("hide");
+                                $("#sel-output-name").val("ScanFile" + (Math.floor((Math.random() * 10000) + 100000)));
+
+                                break;
+                            case K1WebTwain.Options.ScannerInterface.Desktop:
+                                RenderDesktopSelection();
+                                $("#k1interface-visible").addClass("hide");
+                                $("#k1interface-hidden").removeClass("hide");
+                                $("#sel-output-name").val("ScanFile" + (Math.floor((Math.random() * 10000) + 100000)));
+                                break;
+                            default:
+                                break;
+                        }
+                    },4000)
+                });
+
             }).catch(function (err) {
+
                 $("#k1interface-visible").addClass("hide");
                 $("#k1interface-hidden").addClass("hide");
                 console.error(err);
                 $("#errorMessageOutput").text(err);
                 $("#errorMessageDiv").show();
+
+                K1WebTwain.ResetService();
             });
+
+        $("#scanbtn").click(function (x) {
+            InitialiseInterfaceOption();
+        });
     });
 
     var $selected = $("#SelectedInterface").val();
     if ($selected.length > 0) {
         $("#interface-option-dropdown").val($selected).change();
     }
+
 });
 
 function RenderDesktopSelection() {
@@ -114,6 +139,7 @@ function RenderSelection() {
 function BindAcquire() {
     $("#btn-acquire").unbind();
     $("#btn-acquire").click(function (x) {
+
         $("#errorMessageDiv").hide();
         var request = {
         };
@@ -157,6 +183,9 @@ function BindAcquire() {
 
                 $("#errorMessageDiv").show();
             });
+
+
+        InitialiseInterfaceOption();
     });
 }
 
@@ -169,50 +198,60 @@ function BindScannerSelection(devices) {
             .text(devices[i].name));
     }
     $("#sel-scanner").unbind();
-    $("#sel-scanner").change(function (y) {
-        var populate_feature = function ($dropdown, dict) {
-            InitialiseDropDown($dropdown);
+    $("#sel-scanner").change(ScannerSelect);
 
-            var isEmpty = jQuery.isEmptyObject(dict);
+    ScannerSelect();
+}
 
-            if (isEmpty) {
-                $dropdown.parent().hide();
+function ScannerSelect() {
+    var populate_feature = function ($dropdown, dict) {
+        InitialiseDropDown($dropdown);
+
+        var isEmpty = jQuery.isEmptyObject(dict);
+
+        if (isEmpty) {
+            $dropdown.parent().hide();
+            return;
+        }
+
+        for (var prop in dict) {
+            $dropdown.append($("<option />")
+                .val(prop)
+                .text(dict[prop]));
+        }
+
+        $dropdown.parent().show();
+    };
+
+    var selection = $("#sel-scanner").val();
+
+    if (!selection) {
+        return;
+    }
+
+    K1WebTwain.Device(selection)
+        .then(function (device) {
+            if (!device) {
                 return;
             }
 
-            for (var prop in dict) {
-                $dropdown.append($("<option />")
-                    .val(prop)
-                    .text(dict[prop]));
-            }
+            populate_feature($("#sel-color"), {});
+            populate_feature($("#sel-dpi"), {});
+            populate_feature($("#sel-page-size"), {});
+            populate_feature($("#sel-duplex"), {});
 
-            $dropdown.parent().show();
-        };
-
-        var selection = $("#sel-scanner").val();
-
-        if (!selection) {
-            return;
-        }
-
-        var device = K1WebTwain.Device(selection);
-
-        if (!device) {
-            return;
-        }
-
-        populate_feature($("#sel-color"), {});
-        populate_feature($("#sel-dpi"), {});
-        populate_feature($("#sel-page-size"), {});
-        populate_feature($("#sel-duplex"), {});
-
-        BindDocumentSource(device.documentSourceIds)
-    });
+            BindDocumentSource(device.documentSourceIds)
+        })
+        .catch(function (ex) {
+            console.error(ex);
+            var err = JSON.stringify(ex.responseJSON, null, 4);
+            $("#errorMessageOutput").text(err);
+            $("#errorMessageDiv").show();
+        });
 }
 
-function BindDocumentSource(documentSources) {
-    console.log(documentSources);
 
+function BindDocumentSource(documentSources) {
     var $scanner_dropdown = InitialiseDropDown($("#sel-document-source"));
 
     for (var prop in documentSources) {
@@ -224,61 +263,83 @@ function BindDocumentSource(documentSources) {
     $scanner_dropdown.parent().show();
 
     $("#sel-document-source").unbind();
-    $("#sel-document-source").change(function (y) {
-        var populate_feature = function ($dropdown, dict) {
-            InitialiseDropDown($dropdown);
+    $("#sel-document-source").change(DocumentSourceSelect);
 
-            var isEmpty = jQuery.isEmptyObject(dict);
+    DocumentSourceSelect();
+}
 
-            if (isEmpty) {
-                $dropdown.parent().hide();
-                return;
-            }
+function DocumentSourceSelect() {
+    var populate_feature = function ($dropdown, dict) {
+        InitialiseDropDown($dropdown);
 
-            for (var prop in dict) {
-                $dropdown.append($("<option />")
-                    .val(prop)
-                    .text(dict[prop]));
-            }
+        var isEmpty = jQuery.isEmptyObject(dict);
 
-            $dropdown.parent().show();
-        };
-
-        var selection = $("#sel-document-source").val();
-
-        if (!selection) {
+        if (isEmpty) {
+            $dropdown.parent().hide();
             return;
         }
 
-        var deviceSelection = $("#sel-scanner").val();
-        var device = K1WebTwain.Device(deviceSelection);
-
-        if (!device) {
-            return;
+        for (var prop in dict) {
+            $dropdown.append($("<option />")
+                .val(prop)
+                .text(dict[prop]));
         }
 
-        var pixelOptions = device.documentSourceIds[selection].pixelTypeIds;
-        var resolutionOptions = device.documentSourceIds[selection].resolutionIds;
-        var pageSizeOptions = device.documentSourceIds[selection].pageSizeIds;
-        var duplexOptions = device.documentSourceIds[selection].duplexIds;
+        $dropdown.parent().show();
+    };
 
-        populate_feature($("#sel-color"), pixelOptions);
-        populate_feature($("#sel-dpi"), resolutionOptions);
-        populate_feature($("#sel-page-size"), pageSizeOptions);
-        populate_feature($("#sel-duplex"), duplexOptions);
-    });
+    var selection = $("#sel-document-source").val();
+
+    if (!selection) {
+        return;
+    }
+
+    var deviceSelection = $("#sel-scanner").val();
+
+    var device = K1WebTwain.FetchedDevice(deviceSelection);
+
+    if (!device) {
+        return;
+    }
+
+    var pixelOptions = device.documentSourceIds[selection].pixelTypeIds;
+    var resolutionOptions = device.documentSourceIds[selection].resolutionIds;
+    var pageSizeOptions = device.documentSourceIds[selection].pageSizeIds;
+    var duplexOptions = device.duplexIds;
+
+    populate_feature($("#sel-color"), pixelOptions);
+    populate_feature($("#sel-dpi"), resolutionOptions);
+    populate_feature($("#sel-page-size"), pageSizeOptions);
+    populate_feature($("#sel-duplex"), duplexOptions);
+}
+function InitialiseInterfaceOption() {
+
+    var dropdown = $("#interface-option-dropdown");
+
+    dropdown.empty();
+    dropdown.append("<option disabled selected>Please select...</option>");
+    dropdown.append("<option value='0'>Hidden : Not using Webtwain or Native UI</option>");
+    dropdown.append("<option value='1'>Visible : Uses Webtwain and Native UI</option>");
+    dropdown.append("<option value='2'>Web : only uses Webtwain UI</option>");
+    dropdown.append("<option value='3'>Desktop : only uses Native scanner UI</option>");
+
+    $("#btn-acquire").hide();
+    $("#scanbtn").hide();
+
+    $("#k1interface-visible").addClass("hide");
+    $("#k1interface-hidden").addClass("hide");
+
 }
 
 
 function InitialiseDropDown(dropdown) {
     dropdown.empty();
-    dropdown.append($("<option disabled selected>Please select</option>"));
-    dropdown.selectedIndex = -1
+    //dropdown.append($("<option disabled selected>Please select</option>"));
+    dropdown.selectedIndex = 0;
     return dropdown;
 }
 
 function K1ScanServiceComplete(data) {
-    console.log(data);
     $(".filename").val(data.filename);
     $(".filesize").text(data.sizeDisplay);
     $(".filesize").show();
@@ -287,4 +348,11 @@ function K1ScanServiceComplete(data) {
 
     $("#uploadResponseOutput").text(JSON.stringify(data.uploadResponse, null, 4));
     $("#uploadResponseDiv").show();
+}
+
+function InitialiseToastr() {
+    toastr.options.timeOut = 10000;
+    toastr.options.extendedTimeOut = 5000;
+    toastr.options.progressBar = true;
+    toastr.options.positionClass = "toast-top-center";
 }

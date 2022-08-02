@@ -2,6 +2,11 @@
 
 <div>
     <div><h1>Scan Demo Page</h1></div>
+
+    <div class="alert alert-danger alert-dismissible show" role="alert">
+        <strong>Note : This is a BETA version only</strong>
+        <p>See the list of current issues at <a href="https://github.com/Knowledgeone-Corporation/web-twain-sample/issues">Webtwain Issues on GitHub</a></p>
+    </div>
     <div class="alert alert-info alert-dismissible show" role="alert">
         <strong>Note: </strong>The demonstration service has the following limitations;
         - generated documents contain a watermark,
@@ -20,20 +25,10 @@
             <label>Interface Option</label>
             <div>
                 <select id="interface-option-dropdown" class="form-control">
-                    <option disabled selected>Please select...</option>
-                    <option value="0">Hidden</option>
-                    <option value="1">Visible</option>
-                    <option value="2">Web</option>
-                    <option value="3">Desktop</option>
                 </select>
             </div>
         </div>
         <div id="k1interface-visible" class="hide">
-            <div><label>Name:</label></div>
-            <input asp-for="Name" class="form-control" />
-
-            <div style="margin-top:12px"><label>Title:</label></div>
-            <input asp-for="Title" class="form-control" />
 
             <div style="margin-top:12px"><label>Scan Document:</label></div>
             <div class="input-group">
@@ -41,11 +36,6 @@
                     <button id="scanbtn" type="button" class="btn btn-primary" aria-label="Bold">
                         <span>Scan</span>
                     </button>
-                </div>
-                <input class="form-control filename" aria-label="Text input with multiple buttons">
-                <span class="input-group-addon filesize" style="display:none"></span>
-                <div class="input-group-btn fileview" style="display:none">
-                    <button id="viewBtn" type="button" class="btn btn-default k1ViewBtn">View</button>
                 </div>
             </div>
         </div>
@@ -83,7 +73,7 @@
                 </div>
 
                 <label>Output File Name</label>
-                <input id="sel-output-name" class="form-control" type="text" placeholder="Please enter a file name">
+                <input id="sel-output-name" class="form-control" type="text" placeholder="Please enter a file name" value="ScanFile">
 
                 <label>Output File Type</label>
                 <select id="sel-output" class="form-control"></select>
@@ -97,11 +87,6 @@
                             <span>Scan</span>
                         </button>
                     </div>
-                    <input class="form-control filename" aria-label="Text input with multiple buttons">
-                    <span class="input-group-addon filesize" style="display:none"></span>
-                    <div class="input-group-btn fileview" style="display:none">
-                        <button id="viewBtn2" type="button" class="btn btn-default k1ViewBtn">View</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -111,6 +96,9 @@
                 <label>Response from file upload route:</label>
             </div>
             <pre id="uploadResponseOutput"></pre>
+            <div class="input-group-btn fileview" style="display:none">
+                <button id="viewBtn" type="button" class="btn btn-default k1ViewBtn">View</button>
+            </div>
         </div>
 
         <div class="alert alert-danger" style="margin-top: 12px; display: none;" id="errorMessageDiv">
@@ -120,4 +108,5 @@
             <pre id="errorMessageOutput"></pre>
         </div>
     </form>
+
 </div>

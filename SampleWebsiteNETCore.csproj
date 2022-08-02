@@ -2,14 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Configurations>Debug;Release;Demo</Configurations>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="docs\api_reference\**" />
-    <Content Remove="docs\api_reference\**" />
-    <EmbeddedResource Remove="docs\api_reference\**" />
-    <None Remove="docs\api_reference\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
@@ -17,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Cryptography.Internal" Version="3.1.3" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
   </ItemGroup>
 
   <ItemGroup>

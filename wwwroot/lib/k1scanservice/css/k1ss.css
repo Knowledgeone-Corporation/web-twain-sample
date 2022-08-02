@@ -444,3 +444,11 @@
 .k1ss-download {
     text-decoration: none;
 }
+
+#toast-container > div.toast {
+    opacity: 1;
+}
+
+.toast-top-center {
+    margin-top: 30px
+}
