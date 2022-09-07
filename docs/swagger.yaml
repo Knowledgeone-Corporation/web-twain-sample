@@ -199,7 +199,7 @@ paths:
                 example: true
                 
   /AttachDocument:
-    get:
+    post:
       summary: Returns the file details of the generated file.
       description: Generates a file with the supplied parameters. <br/> Returns the file details, including the filename, size and type. Also returns the response from the file upload route. <br/>If the ocrType is set to a non-zero value, you will need to poll the CheckOCRStatus request.
       requestBody:
@@ -243,6 +243,72 @@ paths:
               schema: 
                 $ref: '#/components/schemas/FileData'
 
+  /Initialize:
+    post:
+      summary: Initialises the service.
+      description: Starts a new session with the service. <br/> You will need to generate a unique identifer for the session, this will be used for subsequent calls. (e.g. the current time in ticks). <br/> This call will return the version of the installed service and whether the OCR option is enabled.
+      parameters: 
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a ServiceData object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceData'
+
+  /Devices:
+    get:
+      summary: Returns the collection of imaging devices.
+      description: Retrieves the collection containing the imaging devices available on the user's machine.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a a collection containing the imaging devices available on the user's machine
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: "#/components/schemas/Source"
+  /Device:
+    get:
+      summary: Return properties of the specified imaging device.
+      description: Retrieves the properties of the specified imaging device. <br> Properties are Source Type, Pixel Type, Resolution Type, Duplex (Feeder), Page Size,...
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Return properties of the specified imaging device.
+          content:
+            application/json:
+              schema: 
+                type: object
+                $ref: "#/components/schemas/Source"
+  /CheckIsFeederLoaded:
+    get:
+      summary: Checks if document feeder is loaded or empty for the specified imaging device.
+      description: Checks if document feeder is loaded with paper or empty for the specified imaging device.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Return boolean result.
+          content:
+            application/json:
+              schema: 
+                type: boolean
+  /ResetService:
+    get:
+      summary: Restart the service to reset the list of imaging devices.
+      description: Restart the service to reset the list of imaging devices. <br> Returns HTTP200 OK if the service is successfully restarted.
+      response:
+        '200':
+          description: The service is successfully restarted.
+
 components:
   parameters:
     clientID:
@@ -253,6 +319,14 @@ components:
       schema:
         type: integer
       example: 1619662600769
+    id:
+      name: id
+      in: query
+      description: unique identifier for the imaging device
+      required: true
+      schema:
+        type: integer
+      example: 0
       
   schemas:
     EnumOCRType:
@@ -362,6 +436,15 @@ components:
           type: boolean
           description: whether the imaging device has been set as default on the user's machine
           example: true
+        documentSourceIds:
+          type: object
+          properties:
+            documentSourceId:
+              type: integer
+              example: 0
+            functionalUnit:
+              type: object
+          description: detailed information of the imaging device's properties
     OcrProgress:
       type: object
       properties:
