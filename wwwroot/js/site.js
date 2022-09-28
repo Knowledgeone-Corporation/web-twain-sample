@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    InitialiseToastr();
     InitialiseInterfaceOption();
 
     $("#interface-option-dropdown").change(function (x) {
@@ -28,7 +27,9 @@ $(document).ready(function () {
                 $(".alert").hide();
                 $("#k1interface-visible").addClass("hide");
                 $("#k1interface-hidden").addClass("hide");
+
                 K1WebTwain.ResetService().then(function () {
+                    ShowWait("Preparing...", false);
                     setTimeout(() => {
                         switch (result.scannerInterface) {
                             case K1WebTwain.Options.ScannerInterface.Visible:
@@ -51,8 +52,10 @@ $(document).ready(function () {
                                 break;
                             default:
                                 break;
+
                         }
-                    },4000)
+                        HideWait();
+                    }, 4000)
                 });
 
             }).catch(function (err) {
@@ -152,6 +155,7 @@ function BindAcquire() {
         request.filename = $("#sel-output-name").val();
         request.pageSizeId = $("#sel-page-size").val();
         request.documentSourceId = $("#sel-document-source").val();
+        request.documentSoureName = $("#sel-document-source option:selected").text();
         request.duplexId = $("#sel-duplex").val();
 
         K1WebTwain.Acquire(request)
@@ -163,29 +167,34 @@ function BindAcquire() {
 
                 $("#uploadResponseOutput").text(JSON.stringify(data.uploadResponse, null, 4));
                 $("#uploadResponseDiv").show();
-            })
-            .catch(function (x) {
-                console.error(x);
 
-                if (!!x.responseJSON) {
-                    try {
-                        $("#errorMessageOutput").text(JSON.stringify(x.responseJSON, null, 4));
-                    } catch (e) {
-                        if (!!x.responseText) {
-                            $("#errorMessageOutput").text(x.responseText);
+                InitialiseInterfaceOption();
+            })
+            .catch(function (error) {
+                if (error) {
+                    if (error.statusText && error.statusText === 'timeout') {
+                        $("#errorMessageOutput").text('Timeout error while processing/uploading scanned documents.');
+                    }
+
+                    if (!!error.responseJSON) {
+                        try {
+                            $("#errorMessageOutput").text(JSON.stringify(error.responseJSON, null, 4));
+                        } catch (e) {
+                            if (!!error.responseText) {
+                                $("#errorMessageOutput").text(error.responseText);
+                            }
                         }
                     }
-                }
 
-                if (!!x.responseText) {
-                    $("#errorMessageOutput").text(x.responseText);
-                }
+                    if (!!error.responseText) {
+                        $("#errorMessageOutput").text(error.responseText);
+                    }
 
-                $("#errorMessageDiv").show();
+                    $("#errorMessageDiv").show();
+
+                    InitialiseInterfaceOption();
+                }
             });
-
-
-        InitialiseInterfaceOption();
     });
 }
 
@@ -301,16 +310,11 @@ function DocumentSourceSelect() {
     if (!device) {
         return;
     }
-
-    var pixelOptions = device.documentSourceIds[selection].pixelTypeIds;
-    var resolutionOptions = device.documentSourceIds[selection].resolutionIds;
-    var pageSizeOptions = device.documentSourceIds[selection].pageSizeIds;
-    var duplexOptions = device.duplexIds;
-
-    populate_feature($("#sel-color"), pixelOptions);
-    populate_feature($("#sel-dpi"), resolutionOptions);
-    populate_feature($("#sel-page-size"), pageSizeOptions);
-    populate_feature($("#sel-duplex"), duplexOptions);
+    var fUnit = device.documentSourceIds[selection];
+    populate_feature($("#sel-color"), fUnit.pixelTypeIds);
+    populate_feature($("#sel-dpi"), fUnit.resolutionIds);
+    populate_feature($("#sel-page-size"), fUnit.pageSizeIds);
+    populate_feature($("#sel-duplex"), fUnit.duplexIds);
 }
 function InitialiseInterfaceOption() {
 
@@ -350,9 +354,20 @@ function K1ScanServiceComplete(data) {
     $("#uploadResponseDiv").show();
 }
 
-function InitialiseToastr() {
-    toastr.options.timeOut = 10000;
-    toastr.options.extendedTimeOut = 5000;
-    toastr.options.progressBar = true;
-    toastr.options.positionClass = "toast-top-center";
+
+function ShowWait(strMessage, blnAllowCancel) {
+    if (strMessage)
+        $('.k1ss-msg').text(strMessage);
+    else
+        $('.k1ss-msg').text('Loading, please wait...');
+    if (!blnAllowCancel) blnAllowCancel = false;
+    if (blnAllowCancel == true)
+        $(".k1ss-msgbox .k1ss-close").show();
+    else
+        $(".k1ss-msgbox .k1ss-close").hide();
+    $('.k1ss-wait-div').show();
+}
+
+function HideWait() {
+    $('.k1ss-wait-div').hide();
 }
