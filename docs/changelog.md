@@ -1,5 +1,19 @@
 ## Knowledgeone WebTWAIN Release Notes
 
+### Version 2.2.0
+- This release introduces many stability fixes for both Windows and Mac OS
+- Supports the Sourceforge Virtual scanner
+- Handle skip empty page setting for scanners
+- Supports secure messaging for Safaris on Mac OS
+- Auto restart in case of crashed service
+- Check document feeder prior to scan for compatible scanners
+- Greatly expanded logging capabilities for both the service and the native scanner app
+- Comprehensive error messaging, ensuring that error messages get reported to the web page
+- Improvements in page placement
+- More intuitive flow for demo website
+- Improved handling of large images 
+- Optional command to reset the windows service 
+
 ### Version 2.1.0
 - This release brings feature parity for macOS. 
 - Updated to use the loopback address instead of localhost. [Private network access update](https://developer.chrome.com/blog/private-network-access-update/)
