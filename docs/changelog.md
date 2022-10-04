@@ -9,10 +9,9 @@
 - Check document feeder prior to scan for compatible scanners
 - Greatly expanded logging capabilities for both the service and the native scanner app
 - Comprehensive error messaging, ensuring that error messages get reported to the web page
-- Improvements in page placement
-- More intuitive flow for demo website
 - Improved handling of large images 
 - Optional command to reset the windows service 
+- More intuitive flow for demo website
 
 ### Version 2.1.0
 - This release brings feature parity for macOS. 
