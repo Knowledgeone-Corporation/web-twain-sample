@@ -60,8 +60,8 @@ K1WebTwain.Configure(configuration)
 ```
 This is only required for Windows version of WebTwain Scanner Service where scanners may initially appear but are subsequently unavailable.   The call is supported on MacOS but performs no function on that platform.
 
-4. Please follow the steps outlined by the selected **scannerInterface** value. If an value is not provided it will default to **K1WebTwain.Options.ScannerInterface.Visible**
-#### K1WebTwain.Options.ScannerInterface.None
+4. Please follow the steps outlined by the selected **scannerInterface** value. If an value is not provided it will default to **K1WebTwain.Options.ScannerInterface.None** (Placeholder text: **Please select...**)
+#### K1WebTwain.Options.ScannerInterface.Hidden
 1. Invoke **K1WebTwain.GetDevices** to get a list of available devices.
 ```javascript
 K1WebTwain.GetDevices()
@@ -72,7 +72,17 @@ K1WebTwain.GetDevices()
         ...
     });
 ```
-2. Invoke **K1WebTwain.Acquire** to start scan and generate a document with the provided request.
+2. Invoke **K1WebTwain.Device** to get detailed specifications of selected device.
+```javascript
+K1WebTwain.Device(selection)
+    .then(function(device){
+        ...
+    })
+    .catch(function(err){
+        ...
+    });
+```
+3. Invoke **K1WebTwain.Acquire** to start scan and generate a document with the provided request.
 ```javascript
 var request = {
     deviceId: 0,
