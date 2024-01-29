@@ -2,11 +2,6 @@
 
 <div>
     <div><h1>Scan Demo Page</h1></div>
-
-    <div class="alert alert-danger alert-dismissible show" role="alert">
-        <strong>Note : This is a BETA version only</strong>
-        <p>See the list of current issues at <a href="https://github.com/Knowledgeone-Corporation/web-twain-sample/issues">Webtwain Issues on GitHub</a></p>
-    </div>
     <div class="alert alert-info alert-dismissible show" role="alert">
         <strong>Note: </strong>The demonstration service has the following limitations;
         - generated documents contain a watermark,
@@ -81,6 +76,9 @@
                 <label>OCR Type</label>
                 <select id="sel-ocr-type" class="form-control"></select>
 
+                <label>Save To</label>
+                <select id="sel-save-to" class="form-control"></select>
+
                 <div class="input-group" style="margin-top:12px">
                     <div class="input-group-btn">
                         <button id="btn-acquire" type="button" class="btn btn-primary" aria-label="Bold">
@@ -93,7 +91,7 @@
 
         <div class="alert alert-success" style="margin-top:12px;display:none;" id="uploadResponseDiv">
             <div style="margin-top:12px">
-                <label>Response from file upload route:</label>
+                <label class="upload-response-header">Response from file upload route:</label>
             </div>
             <pre id="uploadResponseOutput"></pre>
             <div class="input-group-btn fileview" style="display:none">

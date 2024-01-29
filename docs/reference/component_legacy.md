@@ -21,7 +21,7 @@
 1. Copy the [lib](https://github.com/Knowledgeone-Corporation/web-twain-sample/tree/master/wwwroot/lib) directory to your project.
 2. Add the following references to your HTML DOM project.
 ```html
-<script src="~/lib/k1scanservice/js/k1ss.js"></script>
+<script src="~/lib/k1scanservice/js/k1ss_obfuscated.js" type="module" asp-append-version="true"></script>
 <link rel="stylesheet" href="~/lib/k1scanservice/css/k1ss.min.css" />
 ```
 3. Bind the component to a HTML element, by invoking the k1scanservice.  
