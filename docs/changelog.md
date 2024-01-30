@@ -1,5 +1,13 @@
 ## Knowledgeone WebTWAIN Release Notes
 
+### Version 2.3.0
+- This release introduces stability fixes for both Windows and MacOS
+- Supports secure messaging for browsers that enforce HTTPS requests on Windows
+- Supports additional header(s) when uploading scanned page(s)
+- Support resizing function for the scanned page(s)
+- New mechanism to manage and distribute the license among sites
+- Support options to save the processed documents locally or upload them to configured endpoints
+
 ### Version 2.2.0
 - This release introduces many stability fixes for both Windows and Mac OS
 - Supports the Sourceforge Virtual scanner
