@@ -177,7 +177,7 @@ function BindAcquire() {
                 var responseMessage = data.uploadResponse;
 
                 if (data.saveToType === K1WebTwain.Options.SaveToType.Local) {
-                    $("#viewBtn").trigger("click").text("Download");
+                    $("#viewBtn").text("Download");
                     $(".upload-response-header").text("File Info:");
                     responseMessage = {
                         filename: data.filename,
@@ -377,7 +377,7 @@ function K1ScanServiceComplete(data) {
     var responseMessage = data.uploadResponse;
 
     if (data.saveToType === K1WebTwain.Options.SaveToType.Local) {
-        $("#viewBtn").trigger("click").text("Download");
+        $("#viewBtn").text("Download");
         $(".upload-response-header").text("File Info:");
         responseMessage = {
             filename: data.filename,
