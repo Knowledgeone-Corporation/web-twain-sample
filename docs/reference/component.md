@@ -6,33 +6,36 @@
     - [onComplete](#oncomplete)
     - [viewButton](#viewbutton)
     - [fileUploadURL](#fileuploadurl)
+    - [fileUploadHeaders](#fileUploadHeaders)
     - [clientID](#clientid)
     - [setupFile](#setupfile)
-    - [version](#version)
+    - [licenseFile](#licenseFile)
     - [interfacePath](#interfacepath)
 - [OnCompleteData](#oncompletedata)
 
 ### Pre-requisites
 - [jQuery 3](https://jquery.com/)
-- [WebTwain Service](https://webtwainsdk.com/demo-request/) is required to run this demo. Please acquire a copy from the demo website by clicking <b>Scan </b> to dowload and install the required service.
+- [WebTwain Service](https://webtwainsdk.com/demo-request/) is required to run this demo. Please acquire a copy from the demo website by clicking <b>Scan </b> to download and install the required service.
 
 ### Steps
 
 1. Copy the [lib](https://github.com/Knowledgeone-Corporation/web-twain-sample/tree/master/wwwroot/lib) directory to your project.
 2. Add the following references to your HTML DOM project.
 ```html
-<script src="~/lib/k1scanservice/js/k1ss_obfuscated.js" type="module" asp-append-version="true"></script>
+<script src="~/lib/k1scanservice/js/k1ss.js" type="module" asp-append-version="true"></script>
 <link rel="stylesheet" href="~/lib/k1scanservice/css/k1ss.min.css" />
 ```
-3. Invoke **K1WebTwain.Configure** to instatiate the service.
+3. Invoke **K1WebTwain.Configure** to instantiate the service.
 ```javascript
 var configuration = {
     onComplete: K1ScanServiceComplete,
     viewButton: $(".k1ViewBtn"),
     scanButton: $("#scanbtn"),
     fileUploadURL: "",
+    fileUploadHeaders: [{ key: "", value: "" }],
     clientID: 0,
     setupFile: "",
+    licenseFile: "",
     interfacePath: "", 
     scannerInterface: K1WebTwain.Options.ScannerInterface.Visible,
 };
@@ -60,7 +63,7 @@ K1WebTwain.Configure(configuration)
 ```
 This is only required for Windows version of WebTwain Scanner Service where scanners may initially appear but are subsequently unavailable.   The call is supported on MacOS but performs no function on that platform.
 
-4. Please follow the steps outlined by the selected **scannerInterface** value. If an value is not provided it will default to **K1WebTwain.Options.ScannerInterface.Visible**
+4. Please follow the steps outlined by the selected **scannerInterface** value. If a value is not provided it will default to **K1WebTwain.Options.ScannerInterface.Visible**
 #### K1WebTwain.Options.ScannerInterface.None
 1. Invoke **K1WebTwain.GetDevices** to get a list of available devices.
 ```javascript
@@ -84,6 +87,7 @@ var request = {
     filetype: K1WebTwain.Options.OutputFiletype.PDF,
     ocrType: K1WebTwain.Options.OcrType.None,
     filename: "test",
+    saveToType: K1WebTwain.Options.SaveToType.Upload
 };
 
 K1WebTwain.Acquire(request)
@@ -113,6 +117,7 @@ var request = {
     filetype: K1WebTwain.Options.OutputFiletype.PDF,
     ocrType: K1WebTwain.Options.OcrType.None,
     filename: "test",
+    saveToType: K1WebTwain.Options.SaveToType.Upload
 };
 
 K1WebTwain.Acquire(request)
@@ -127,8 +132,7 @@ K1WebTwain.Acquire(request)
 - No additional actions are needed. The modal will be shown when the supplied scanButton is clicked.
 #### K1WebTwain.Options.ScannerInterface.Web
 - No additional actions are needed. The modal will be shown when the supplied scanButton is clicked.
-
-
+  
 ### Configuration Properties
 
 #### onComplete
@@ -157,7 +161,19 @@ K1WebTwain.Acquire(request)
 **required:** true  
 **description:** Route where the file will be sent to via HttpRequest.  
 **example:**  
-> document.location.origin + '/Home/UploadFile' [Sample Route](https://github.com/Knowledgeone-Corporation/web-twain-sample/blob/50b9f1cdcd9332528485034a3c26b888d374b160/Controllers/HomeController.cs#L65)
+> document.location.origin + '/Home/UploadFile' [Sample Route](https://github.com/Knowledgeone-Corporation/web-twain-sample/blob/687796d778b0bdb633b1e2614508c4bd6ccbdf4b/Controllers/HomeController.cs#L62)
+
+#### fileUploadHeaders
+**type:** Array of objects(key-value pairs)
+**required:** false  
+**description:**  Additional headers for the request to the upload server when uploading document.  
+**example:**''
+> [
+    {
+>     key: "X-Access-Token",
+      value: "Test"
+    }
+]
 
 #### clientID
 **type:** integer  
@@ -171,7 +187,14 @@ K1WebTwain.Acquire(request)
 **required:** true  
 **description:** Route which returns the service installer.  
 **example:** 
-> document.location.origin + '/Home/DownloadSetup' [Sample Route](https://github.com/Knowledgeone-Corporation/web-twain-sample/blob/50b9f1cdcd9332528485034a3c26b888d374b160/Controllers/HomeController.cs#L91)
+> document.location.origin + '/Home/DownloadSetup' [Sample Route](https://github.com/Knowledgeone-Corporation/web-twain-sample/blob/687796d778b0bdb633b1e2614508c4bd6ccbdf4b/Controllers/HomeController.cs#L103)
+
+#### licenseFile
+**type:** string  
+**required:** true  
+**description:** Route which returns the license file.  
+**example:** 
+> document.location.origin + '/Home/K1Licence' [Sample Route](https://github.com/Knowledgeone-Corporation/web-twain-sample/blob/687796d778b0bdb633b1e2614508c4bd6ccbdf4b/Controllers/HomeController.cs#L116)
 
 #### interfacePath
 **type:** string  
@@ -201,6 +224,8 @@ K1WebTwain.Acquire(request)
     fileLength: 123, // file size in bytes
     sizeDisplay: "1.23 MB", // converted file size
     extension: ".pdf", // file type extension
-    uploadResponse : { } // response returned from the file upload route
+    hasOcrRequest: false, //indicates if there's an Ocr process in progress for a PDF-type document
+    uploadResponse: { }, // response returned from the file upload route,
+    saveToType: K1WebTwain.Options.SaveToType.Local // option to upload the processed file or save it locally
 }
 ```
