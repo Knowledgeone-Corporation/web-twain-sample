@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <None Include="bundleconfig.json" />
+    <None Include="wwwroot\js\site.js" />
+    <None Include="wwwroot\js\site.min.js" />
   </ItemGroup>
 
 </Project>

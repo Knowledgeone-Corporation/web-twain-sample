@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-
+using SampleWebsiteNETCore.Utils;
 
 namespace SampleWebsiteNETCore
 {
@@ -47,7 +44,19 @@ namespace SampleWebsiteNETCore
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseProtectFolder(new ProtectFolderOptions
+            {
+                Path = "/Keys"
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Keys")),
+                RequestPath = "/Keys"
+            });
+
             app.UseStaticFiles();
+
             app.UseCookiePolicy();
             app.UseRouting();
 

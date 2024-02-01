@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Security.Principal;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -115,6 +111,11 @@ namespace SampleWebsiteNETCore.Controllers
             {
                 return File("~/files/K1ScanService.msi", "application/octet-stream", "K1ScanService.msi");
             }
+        }
+
+        public IActionResult K1Licence()
+        {
+            return PhysicalFile(Path.Combine(_hostingEnvironment.ContentRootPath, "Keys/Webtwainsdk.lic"), "text/plain");
         }
     }
 }

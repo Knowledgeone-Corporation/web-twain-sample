@@ -49,7 +49,8 @@
                 <div class="k1ss-group">
                     <label>Page Placement</label>
                     <select class="k1ss-pageplacement k1ss-control" style="width:100%">
-                        <option value="1" selected="selected">After Current Page</option>
+                        <option value="0" selected="selected">Add To End</option>
+                        <option value="1">After Current Page</option>
                         <option value="2">Before Current Page</option>
                         <option value="3">Replace Current Page</option>
                     </select>
@@ -93,6 +94,7 @@
 
                 <div class="k1ss-group k1ss-center">
                     <input type="button" value="ATTACH DOCUMENT" class="k1ss-attach k1ss-button k1ss-disabled" />
+                    <input type="button" value="SAVE LOCALLY" class="k1ss-save-locally k1ss-button k1ss-disabled" />
                 </div>
                 <div class="k1ss-license"></div>
             </div>
@@ -104,6 +106,8 @@
                     <div class="k1ss-tbar-sep"></div>
                     <a class="k1ss-fliph k1ss-btn k1ss-disabled" title="Flip Horizontally"></a>
                     <a class="k1ss-flipv k1ss-btn k1ss-disabled" title="Flip Vertically"></a>
+                    <div class="k1ss-tbar-sep"></div>
+                    <a class="k1ss-resize k1ss-btn k1ss-disabled" title="Resize"></a>
                     <div class="k1ss-tbar-sep"></div>
                     <a class="k1ss-cut k1ss-btn k1ss-disabled k1ss-tool-btn" title="Cut"></a>
                     <a class="k1ss-redact k1ss-btn k1ss-disabled k1ss-tool-btn" title="Redact"></a>
@@ -183,6 +187,48 @@
             </div>
             <div class="k1ss-mb-mt k1ss-progress">
                 <div class="k1ss-progress-bar" style="width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="k1ss-resize-div" style="display:none">
+        <div class="k1ss-dialog-body">
+            <h3 style="margin-top: 0;">Resize</h3>
+            <div class="k1ss-form-group">
+                <input class="k1ss-radpercentage" type="radio" name="k1ss_resizetype" value="0" /><label>Percentage</label>
+                <input class="k1ss-radpixels" type="radio" name="k1ss_resizetype" value="1" checked /><label>Pixels</label>
+            </div>
+            <div class="k1ss-form-group" style="margin-bottom:0;">
+                <label>Horizontal</label>
+                <label style="margin-left: 45px;">Vertical</label>
+            </div>
+            <div class="k1ss-form-group" style="margin-top: 2px;">
+                <input class="k1ss-horizontalsize input-size" style=" margin-right: 8px;" type="number" value="1" />
+                <button class="k1ss-maintainratio k1ss-btn" is-maintain="true"></button>
+                <input class="k1ss-verticalsize input-size" style=" margin-left: 8px;" type="number" value="1" />
+            </div>
+            <div class="k1ss-form-group" style="margin-top: 12px;">
+                <input class="k1ss-chkapplyall" type="checkbox" value="false" /><label>Apply to all pages</label>
+            </div>
+            <div class="k1ss-form-group">
+                <button class="k1ss-okresize k1ss-button">OK</button>
+                <button class="k1ss-cancelresize k1ss-button">Cancel</button>
+            </div>
+            <div class="k1ss-form-group">
+                <button class="k1ss-resetthispage k1ss-button">Reset this page</button>
+                <button class="k1ss-resetallpages k1ss-button">Reset all pages</button>
+            </div>
+        </div>
+    </div>
+    <div class="k1ss-reset-div" style="display:none">
+        <div class="k1ss-dialog-body">
+            <h3 style="margin-top: 0;">Reset Page(s)</h3>
+            <div class="k1ss-form-group">
+                <p class="k1ss-confirmmessage">Do you want to reset this page?</p>
+            </div>
+            <div class="k1ss-form-group confirm-buttons">
+                <input type="hidden" id="resetPageType" name="resetPageType" value="0">
+                <button class="k1ss-okreset k1ss-button">OK</button>
+                <button class="k1ss-cancelreset k1ss-button">Cancel</button>
             </div>
         </div>
     </div>

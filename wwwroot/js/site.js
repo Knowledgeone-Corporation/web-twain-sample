@@ -12,9 +12,16 @@ $(document).ready(function () {
         var configuration = {
             onComplete: K1ScanServiceComplete, //function called when scan complete
             viewButton: $(".k1ViewBtn"), //This is optional. Specify a element that when clicked will view scanned document
-            fileUploadURL: document.location.origin + '/Home/UploadFile', //This is the service that the scanned document will be uploaded to when complete
+            fileUploadURL: document.location.origin + '/Home/UploadFile', //This is the service that the scanned document will be uploaded to when complete,
+            fileUploadHeaders: [
+                {
+                    key: "X-Access-Token",
+                    value: "Test"
+                }
+            ], // This is optional. Specify additional headers for the request to the upload server.
             clientID: $("#ClientID").val(), //This is a way to identify the user who is scanning.  It should be unique per user.  Session ID could be used if no user logged in
             setupFile: document.location.origin + '/Home/DownloadSetup', //location of the installation file if service doesn't yet exist
+            licenseFile: document.location.origin + '/Home/K1Licence', //location of the license file If it unset, value will fallback to Current website url + '/Home/K1Licence'
             interfacePath: "", // This is optional if your application lives under a subdomain.
             scannerInterface: selected,
             scanButton: $("#scanbtn"), // the scan button
@@ -108,6 +115,7 @@ function RenderDesktopSelection() {
 
             populate_dropdown($("#sel-ocr-type"), K1WebTwain.Options.OcrType);
             populate_dropdown($("#sel-output"), K1WebTwain.Options.OutputFiletype);
+            populate_dropdown($("#sel-save-to"), K1WebTwain.Options.SaveToType);
         })
         .catch(function (err) {
             console.error(err);
@@ -131,7 +139,7 @@ function RenderSelection() {
 
             populate_dropdown($("#sel-ocr-type"), K1WebTwain.Options.OcrType);
             populate_dropdown($("#sel-output"), K1WebTwain.Options.OutputFiletype);
-
+            populate_dropdown($("#sel-save-to"), K1WebTwain.Options.SaveToType);
             BindScannerSelection(devices);
         })
         .catch(function (err) {
@@ -152,6 +160,7 @@ function BindAcquire() {
         request.pixelTypeId = $("#sel-color").val();
         request.filetype = $("#sel-output").val();
         request.ocrType = $("#sel-ocr-type").val();
+        request.saveToType = $("#sel-save-to").val();
         request.filename = $("#sel-output-name").val();
         request.pageSizeId = $("#sel-page-size").val();
         request.documentSourceId = $("#sel-document-source").val();
@@ -165,7 +174,22 @@ function BindAcquire() {
                 $(".filesize").show();
                 $(".fileview").show();
 
-                $("#uploadResponseOutput").text(JSON.stringify(data.uploadResponse, null, 4));
+                var responseMessage = data.uploadResponse;
+
+                if (data.saveToType === K1WebTwain.Options.SaveToType.Local) {
+                    $("#viewBtn").text("Download");
+                    $(".upload-response-header").text("File Info:");
+                    responseMessage = {
+                        filename: data.filename,
+                        fileSize: `${data.fileLength} (${data.sizeDisplay})`,
+                        fileExtention: data.extension
+                    };
+                } else {
+                    $("#viewBtn").text("View");
+                    $(".upload-response-header").text("Response from file upload route:");
+                }
+
+                $("#uploadResponseOutput").text(JSON.stringify(responseMessage, null, 4));
                 $("#uploadResponseDiv").show();
 
                 InitialiseInterfaceOption();
@@ -350,7 +374,22 @@ function K1ScanServiceComplete(data) {
     $(".fileview").show();
     $("#saveBtn").removeAttr('disabled');
 
-    $("#uploadResponseOutput").text(JSON.stringify(data.uploadResponse, null, 4));
+    var responseMessage = data.uploadResponse;
+
+    if (data.saveToType === K1WebTwain.Options.SaveToType.Local) {
+        $("#viewBtn").text("Download");
+        $(".upload-response-header").text("File Info:");
+        responseMessage = {
+            filename: data.filename,
+            fileSize: `${data.fileLength} (${data.sizeDisplay})`,
+            fileExtention: data.extension
+        };
+    } else {
+        $("#viewBtn").text("View");
+        $(".upload-response-header").text("Response from file upload route:");
+    }
+
+    $("#uploadResponseOutput").text(JSON.stringify(responseMessage, null, 4));
     $("#uploadResponseDiv").show();
 }
 

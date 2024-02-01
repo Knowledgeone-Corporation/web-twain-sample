@@ -2,7 +2,7 @@
 ## Methods
 #### K1WebTwain.Configure
 **type:** promise  
-**description:** instatiate the service. This method will echo back the request on success.  
+**description:** instantiate the service. This method will echo back the request on success.  
 **example:**  
 ```javascript
 {
@@ -11,8 +11,10 @@
         viewButton: $("#viewBtn"),
         scanButton: $("#scanBtn"),
         fileUploadURL: "",
+        fileUploadHeaders: [{ key: "", value: "" }],
         clientID: 1232141123,
         setupFile: "",
+        licenseFile: "",
         interfacePath: "",
         scannerInterface: K1WebTwain.Options.ScannerInterface.Visible,
     };
@@ -181,6 +183,7 @@
         filetype: K1WebTwain.Options.OutputFiletype.PDF,
         ocrType: K1WebTwain.Options.OcrType.None,
         filename: test,
+        saveToType: K1WebTwain.Options.SaveToType.Upload
     };
 
     K1WebTwain.Acquire(request)
@@ -203,7 +206,9 @@
     fileLength: 123, // file size in bytes
     sizeDisplay: "1.23 MB", // converted file size
     extension: ".pdf", // file type extension
-    uploadResponse : { } // response returned from the file upload route
+    hasOcrRequest: false, //indicates if there's an Ocr process in progress for a PDF-type document
+    uploadResponse: { }, // response returned from the file upload route,
+    saveToType: K1WebTwain.Options.SaveToType.Local // option to upload the processed file or save it locally
 }
 ```
 ---
@@ -219,8 +224,10 @@
     viewButton: HTMLElement,
     scanButton: HTMLElement,
     fileUploadURL: string,
+    fileUploadHeaders: [{ key: "", value: "" }],
     clientID: integer,
     setupFile: string,
+    licenseFile: "",
     interfacePath: string,
     scannerInterface: K1WebTwain.Options.ScannerInterface,
 }
@@ -239,7 +246,8 @@
     duplexId: integer,
     filetype: K1WebTwain.Options.OutputFiletype
     ocrType: K1WebTwain.Options.OcrType
-    filename: string
+    filename: string,
+    saveToType: K1WebTwain.Options.SaveToType.Upload
 }
 ```
 
@@ -274,7 +282,7 @@ PNG
 ```
 None - no OCR processing is done.
 Mapped - text is mapped to the location of the string.
-Embedded - text is embeeded in the document.
+Embedded - text is embedded in the document.
 ```
 
 #### K1WebTwain.Options.PagePlacement
@@ -282,6 +290,14 @@ Embedded - text is embeeded in the document.
 **description:** set the positioning of the scanned pages.  
 ```
 AfterCurrentPage - place the page after the current index in the document.
-BeforeCurrentPage - place the page before to the current index in the document.
+BeforeCurrentPage - place the page before the current index in the document.
 ReplaceCurrentPage - replace the current page in the document
+```
+
+#### K1WebTwain.Options.SaveToType
+**type:** enum  
+**description:** options to save the processed file locally or upload it to configured endpoint
+```
+Upload - Upload the file.
+Local - Save the file locally.
 ```
