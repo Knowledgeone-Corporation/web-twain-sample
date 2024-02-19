@@ -182,7 +182,7 @@ function BindAcquire() {
                     responseMessage = {
                         filename: data.filename,
                         fileSize: `${data.fileLength} (${data.sizeDisplay})`,
-                        fileExtention: data.extension
+                        fileExtension: data.extension
                     };
                 } else {
                     $("#viewBtn").text("View");
@@ -382,7 +382,7 @@ function K1ScanServiceComplete(data) {
         responseMessage = {
             filename: data.filename,
             fileSize: `${data.fileLength} (${data.sizeDisplay})`,
-            fileExtention: data.extension
+            fileExtension: data.extension
         };
     } else {
         $("#viewBtn").text("View");
