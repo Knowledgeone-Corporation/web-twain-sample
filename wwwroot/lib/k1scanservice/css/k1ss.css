@@ -340,6 +340,10 @@
     background: url('../images/PageMove.png');
 }
 
+.k1ss-infor {
+    background: url('../images/Information.png');
+}
+
 .k1ss-btn.k1ss-disabled {
     border: none;
     box-shadow: none;
@@ -457,8 +461,9 @@
     margin-top: 30px
 }
 
-/* Begin Image Resize Section*/
+/* Begin Custom Modal Section*/
 .k1ss-reset-div,
+.k1ss-product-infor-div,
 .k1ss-resize-div {
     position: absolute;
     top: 66px;
@@ -471,6 +476,7 @@
 .k1ss-reset-div {
     top: 33%;
 }
+    .k1ss-product-infor-div .k1ss-dialog-body,
     .k1ss-reset-div .k1ss-dialog-body,
     .k1ss-resize-div .k1ss-dialog-body {
         width: 266px;
@@ -484,6 +490,10 @@
 
     .k1ss-reset-div .k1ss-dialog-body {
         width: 356px;
+    }
+
+    .k1ss-product-infor-div .k1ss-dialog-body{
+        width: 272px;
     }
 
         .k1ss-resize-div .k1ss-dialog-body .k1ss-form-group {
@@ -529,6 +539,7 @@
                     background-color: #0067c0;
                 }
 
+            .k1ss-product-infor-div .k1ss-dialog-body .k1ss-form-group .k1ss-button,
             .k1ss-reset-div .k1ss-dialog-body .k1ss-form-group .k1ss-button,
             .k1ss-resize-div .k1ss-dialog-body .k1ss-form-group .k1ss-button {
                 border: none;
@@ -538,6 +549,7 @@
                 margin-top: 4px;
             }
 
+            .k1ss-product-infor-div .k1ss-dialog-body .k1ss-form-group .k1ss-okreset,
             .k1ss-reset-div .k1ss-dialog-body .k1ss-form-group .k1ss-okreset,
             .k1ss-resize-div .k1ss-dialog-body .k1ss-form-group .k1ss-okresize {
                 background-color: #0067c0;
@@ -588,4 +600,14 @@
         .k1ss-reset-div .k1ss-dialog-body .k1ss-form-group .k1ss-button {
             width: 79px;
         }
-/* End Image Resize Section*/
+
+.k1ss-product-infor-div p {
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.k1ss-product-infor-div .k1ss-okproductinfor {
+    width: 50%;
+    font-size: 16px;
+}
+/* End Custom Modal Section*/

@@ -14,6 +14,7 @@ paths:
       description: Starts a new session with the service. <br/> You will need to generate a unique identifer for the session, this will be used for subsequent calls. (e.g. the current time in ticks). <br/> This call will return the a collection of imaging devices, the version of the installed service and whether the OCR option is enabled.
       parameters: 
         - $ref: '#/components/parameters/clientID'
+        - $ref: '#/components/parameters/licenseFile'
       responses:
         '200':
           description: Returns a ServiceData object
@@ -181,7 +182,41 @@ paths:
                 type: boolean
                 description: whether the deletion was successful.
                 example: true
-                
+
+  /ResizePage:
+    post:
+      summary: Resize page and return the current resized page.
+      description: Resize a page with the supplied parameters. <br/> Returns the current resized page.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResizePage"
+      responses:
+        '200':
+          description: Returns a ImageData object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ImageData'
+
+  /ResetPage:
+    post:
+      summary: Reset resized page(s) and return the current resized page.
+      description: Reset resized page(s) with the supplied parameters. <br/> Returns the current page.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPage"
+      responses:
+        '200':
+          description: Returns a ImageData object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ImageData'
+
   /DeleteAllPages:
     post:
       summary: Deletes all the acquired pages from the imaging device.
@@ -249,6 +284,7 @@ paths:
       description: Starts a new session with the service. <br/> You will need to generate a unique identifer for the session, this will be used for subsequent calls. (e.g. the current time in ticks). <br/> This call will return the version of the installed service and whether the OCR option is enabled.
       parameters: 
         - $ref: '#/components/parameters/clientID'
+        - $ref: '#/components/parameters/licenseFile'
       responses:
         '200':
           description: Returns a ServiceData object
@@ -319,10 +355,40 @@ components:
       schema:
         type: integer
       example: 1619662600769
+    
+    licenseFile:
+      name: licenseFile
+      in: query
+      description: license file url
+      required: false
+      schema:
+        type: string
+      example: "http://localhost:5000/Home/K1Licence"
+
+    fileUploadHeaders:
+      name: fileUploadHeaders
+      in: query
+      description: Additional headers for request to upload scanned page(s)
+      required: false
+      schema:
+        type: array
+        items: 
+          $ref: "#/components/schemas/KeyValuePairs"
+      example: [{ key: "", value: ""}]
+
     id:
       name: id
       in: query
       description: unique identifier for the imaging device
+      required: true
+      schema:
+        type: integer
+      example: 0
+
+    page:
+      name:       
+      in: query
+      description: index of page to work with
       required: true
       schema:
         type: integer
@@ -361,6 +427,28 @@ components:
         - bmp
         - tif
         - pdf
+
+    SaveToType:
+      description: '0: Upload - Upload to fileUploadURL endpoint<br/>1: Local - Save locally'
+      type: integer
+      enum:
+        - 0
+        - 1
+
+    ResizeType:
+      description: '0: Percentage - Resize width & height page(s) by percentage<br/>1: Pixels -  Resize width & height page(s) by pixel(s)'
+      type: integer
+      enum:
+        - 0
+        - 1
+
+    ResetPageType:
+      description: '0: ThisPage - Reset only this resized page<br/>1: AllPages - Reset all resized pages'
+      type: integer
+      enum:
+        - 0
+        - 1
+
     FileData:
       type: object
       properties:
@@ -388,6 +476,10 @@ components:
           type: string
           description: response returned from the file upload route 
           example: null
+        saveToType:
+          type: integer
+          description: whether the document will be saved locally or uploaded to 'fileUploadURL' endpoint
+          $ref: '#/components/schemas/SaveToType'
     StatusMessage:
       type: object
       properties:
@@ -549,4 +641,61 @@ components:
         fileUploadURL:
           type: string
           description: route where the file will be posted to by the service
-          example: 1
+          example: "http://localhost:5000/Home/UploadFile"
+        fileUploadHeaders:
+          type: array
+          items: 
+            $ref: "#/components/schemas/KeyValuePairs"
+            example: [{ key: "", value: ""}]
+        saveToType:
+          type: integer
+          description: whether the document will be saved locally or uploaded to ''fileUploadURL' endpoint
+          $ref: '#/components/schemas/SaveToType'
+
+    ResizePage:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        page:
+          $ref: '#/components/parameters/page'
+        horizontal:
+          type: int
+          description: width to resize (value will either be percent or pixel(s))
+          example: 100
+        vertical:
+          type: int
+          description: height to resize (value will either be percent or pixel(s))
+          example: 100
+        resizeType:
+          type: integer
+          description: whether resize width and height of page(s) by percentage or pixel(s)
+          $ref: '#/components/schemas/ResizeType'
+        applyForAll:
+          type: bool
+          description: where resize request will apply for all pages or only selected page
+          example: false
+
+    ResetPage:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        page:
+          $ref: '#/components/parameters/page'
+        resetType:
+          type: integer
+          description: whether reset all resized page(s) or only selected page
+          $ref: '#/components/schemas/ResetPageType'
+
+    KeyValuePairs:
+      type: object
+      properties:
+        key:
+          type: string
+          description: Header name
+          example: "X-Access-Code"
+        value:
+          type: string
+          description: Header value
+          example: "Test"
