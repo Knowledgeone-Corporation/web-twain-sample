@@ -27,7 +27,7 @@ paths:
     get:
       summary: Returns HTTP200 OK if the service is available.
       description: Returns HTTP200 OK if the service is available.
-      response:
+      responses:
         '200':
           description: The service is available.
 
@@ -40,7 +40,7 @@ paths:
           content:
             application/json:
               schema:
-               - $ref: '#/components/schemas/FetchVersion'
+                $ref: '#/components/schemas/FetchVersion'
                 
   /StartScan:
     post:
@@ -233,6 +233,40 @@ paths:
                 description: whether the deletion was successful.
                 example: true
                 
+  /RestorePage:
+    post:
+      summary: Restore the modified page to original state.
+      description: Restore modified page with the supplied parameters. <br/> Returns the current page.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestorePage"
+      responses:
+        '200':
+          description: Returns a ImageData object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ImageData'
+            
+  /RestoreAllPages:
+    post:
+      summary: Restore all modified pages to original state.
+      description: Restore all modified pages with the supplied parameters. <br/> Returns the current page.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestorePage"
+      responses:
+        '200':
+          description: Returns a ImageData object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ImageData'
+                
   /AttachDocument:
     post:
       summary: Returns the file details of the generated file.
@@ -341,7 +375,7 @@ paths:
     get:
       summary: Restart the service to reset the list of imaging devices.
       description: Restart the service to reset the list of imaging devices. <br> Returns HTTP200 OK if the service is successfully restarted.
-      response:
+      responses:
         '200':
           description: The service is successfully restarted.
 
@@ -386,7 +420,7 @@ components:
       example: 0
 
     page:
-      name:       
+      name: page     
       in: query
       description: index of page to work with
       required: true
@@ -660,11 +694,11 @@ components:
         page:
           $ref: '#/components/parameters/page'
         horizontal:
-          type: int
+          type: integer
           description: width to resize (value will either be percent or pixel(s))
           example: 100
         vertical:
-          type: int
+          type: integer
           description: height to resize (value will either be percent or pixel(s))
           example: 100
         resizeType:
@@ -672,7 +706,7 @@ components:
           description: whether resize width and height of page(s) by percentage or pixel(s)
           $ref: '#/components/schemas/ResizeType'
         applyForAll:
-          type: bool
+          type: boolean
           description: where resize request will apply for all pages or only selected page
           example: false
 
@@ -687,6 +721,14 @@ components:
           type: integer
           description: whether reset all resized page(s) or only selected page
           $ref: '#/components/schemas/ResetPageType'
+    
+    RestorePage:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        page:
+          $ref: '#/components/parameters/page'
 
     KeyValuePairs:
       type: object

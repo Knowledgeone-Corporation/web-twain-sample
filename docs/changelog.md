@@ -1,5 +1,11 @@
 ## Knowledgeone WebTWAIN Release Notes
 
+### Version 2.3.1
+- This release introduces stability fixes for both Windows and MacOS
+- UI and UX enhancements for the initializing and scanning process
+- Improved handling of disconnected/unavailable scanners
+- Supports the restoring for all modified pages and enhances the current restoring function for single-page
+
 ### Version 2.3.0
 - This release introduces stability fixes for both Windows and MacOS
 - Supports secure messaging for browsers that enforce HTTPS requests on Windows
