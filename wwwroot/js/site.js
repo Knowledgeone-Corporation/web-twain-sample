@@ -37,7 +37,7 @@ $(document).ready(function () {
 
                 K1WebTwain.ResetService().then(function () {
                     ShowWait("Preparing...", false);
-                    setTimeout(() => {
+                    //setTimeout(() => {
                         switch (result.scannerInterface) {
                             case K1WebTwain.Options.ScannerInterface.Visible:
                             case K1WebTwain.Options.ScannerInterface.Web:
@@ -62,11 +62,10 @@ $(document).ready(function () {
 
                         }
                         HideWait();
-                    }, 4000)
+                    //}, 4000)
                 });
 
             }).catch(function (err) {
-
                 $("#k1interface-visible").addClass("hide");
                 $("#k1interface-hidden").addClass("hide");
                 console.error(err);
@@ -98,7 +97,10 @@ function RenderDesktopSelection() {
                     .val(devices[i].id)
                     .text(devices[i].name));
             }
+
             $("#sel-scanner").unbind();
+            $("#sel-scanner").change(DesktopScannerSelect);
+            DesktopScannerSelect();
 
             $("#device-group").show();
             BindAcquire();
@@ -236,6 +238,17 @@ function BindScannerSelection(devices) {
     ScannerSelect();
 }
 
+function DesktopScannerSelect() {
+    var selection = $("#sel-scanner").val();
+
+    if (!selection || selection == -1) {
+        $("#btn-acquire").attr('disabled', 'disabled');
+        return;
+    }
+
+    $("#btn-acquire").removeAttr('disabled')
+}
+
 function ScannerSelect() {
     var populate_feature = function ($dropdown, dict) {
         InitialiseDropDown($dropdown);
@@ -264,15 +277,18 @@ function ScannerSelect() {
 
     K1WebTwain.Device(selection)
         .then(function (device) {
-            if (!device) {
-                return;
-            }
-
+            populate_feature($("#sel-document-source"), {});
             populate_feature($("#sel-color"), {});
             populate_feature($("#sel-dpi"), {});
             populate_feature($("#sel-page-size"), {});
             populate_feature($("#sel-duplex"), {});
 
+            if (!device) {
+                $("#btn-acquire").attr('disabled', 'disabled');
+                return;
+            }
+
+            $("#btn-acquire").removeAttr('disabled')
             BindDocumentSource(device.documentSourceIds)
         })
         .catch(function (ex) {
