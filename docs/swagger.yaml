@@ -8,6 +8,21 @@ info:
     url: https://webtwainsdk.com/contact-us/
     email: support@knowledgeonecorp.com
 paths:
+  /Initialize:
+    post:
+      summary: Initialises the service.
+      description: Starts a new session with the service. <br/> You will need to generate a unique identifer for the session, this will be used for subsequent calls. (e.g. the current time in ticks). <br/> This call will return the version of the installed service and whether the OCR option is enabled.
+      parameters: 
+        - $ref: '#/components/parameters/clientID'
+        - $ref: '#/components/parameters/licenseFile'
+      responses:
+        '200':
+          description: Returns a ServiceData object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceData'
+                
   /InitService:
     post:
       summary: Initialises the service.
@@ -185,38 +200,31 @@ paths:
 
   /ResizePage:
     post:
-      summary: Resize page and return the current resized page.
-      description: Resize a page with the supplied parameters. <br/> Returns the current resized page.
+      summary: Start resizing page(s) process.
+      description: Start resizing page(s) with the supplied parameters. <br/> You need to poll GetResizingProgress API to get the job status.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ResizePage"
+              $ref: "#/components/schemas/ResizePageRequest"
       responses:
         '200':
-          description: Returns a ImageData object
+          description: Resizing process is successfully started
+          
+  /GetResizingProgress:
+    get:
+      summary: Checks if the Resizing process has completed on the clients machine.
+      description: Poll this method if the ResizePage request has been invoked. <br/>Return whether the Resizing process has completed and the current progress.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Return PageProcessingProgress object for process status
           content:
             application/json:
               schema: 
-                $ref: '#/components/schemas/ImageData'
-
-  /ResetPage:
-    post:
-      summary: Reset resized page(s) and return the current resized page.
-      description: Reset resized page(s) with the supplied parameters. <br/> Returns the current page.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ResetPage"
-      responses:
-        '200':
-          description: Returns a ImageData object
-          content:
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/ImageData'
-
+                $ref: '#/components/schemas/PageProcessingProgress'
+                
   /DeleteAllPages:
     post:
       summary: Deletes all the acquired pages from the imaging device.
@@ -267,6 +275,35 @@ paths:
               schema: 
                 $ref: '#/components/schemas/ImageData'
                 
+  /ValidatePageSize:
+    get:
+      summary: Validate the page size before ORCing.
+      description: Validate the page size before ORCing and return the list of warning pages.<br/> Warning limit can be set through <strong>OCRFilesizeWarningInMB</strong> setting in <strong>K1ScanService.exe.config</strong>. A value of <strong>0(zero)</strong> means no warning at all. No setting means take default of <strong>20MB</strong>
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a PageSizeValidation object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/PageSizeValidation'
+                
+  /ValidatePdfSize:
+    get:
+      summary: Validate the pdf size before ORCing.
+      description: Validate the pdf size before ORCing to indicate whether the pdf page is exceed the upload limit or not.<br/> Warning limit can be set through <strong>FileUploadLimitInMB</strong> setting in <strong>K1ScanService.exe.config</strong>. A value of <strong>0(zero)</strong> means no warning at all. No setting means take default of <strong>100MB</strong>
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - $ref: '#/components/parameters/isPDFA'
+      responses:
+        '200':
+          description: Returns a FileSizeValidation object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/FileSizeValidation'
+                
   /AttachDocument:
     post:
       summary: Returns the file details of the generated file.
@@ -292,11 +329,27 @@ paths:
         - $ref: '#/components/parameters/clientID'
       responses:
         '200':
-          description: Returns a OcrProgress object
+          description: Returns a OcrProcessingProgress object
           content:
             application/json:
               schema: 
-                $ref: '#/components/schemas/OcrProgress'
+                $ref: '#/components/schemas/OcrProcessingProgress'
+                
+  /CancelOcrProcessing:
+    get:
+      summary: Cancel the OCR processing that still in progress.
+      description: Enable the ability to cancel the OCR processing, especially the intensive and long running one.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns whether the process is successfully canceled or not
+          content:
+            application/json:
+              schema: 
+                type: boolean
+                description: whether the cancelation was successful.
+                example: true
 
   /GetOcrDocument:
     get:
@@ -311,22 +364,20 @@ paths:
             application/json:
               schema: 
                 $ref: '#/components/schemas/FileData'
-
-  /Initialize:
-    post:
-      summary: Initialises the service.
-      description: Starts a new session with the service. <br/> You will need to generate a unique identifer for the session, this will be used for subsequent calls. (e.g. the current time in ticks). <br/> This call will return the version of the installed service and whether the OCR option is enabled.
-      parameters: 
-        - $ref: '#/components/parameters/clientID'
-        - $ref: '#/components/parameters/licenseFile'
+  
+  /GetDocument:
+    get:
+      summary: Retrieves the created document from the scan service.
+      description: Retrieves the latest created document from the scan service.
       responses:
         '200':
-          description: Returns a ServiceData object
+          description: Returns the document file
           content:
-            application/json:
+            application/octet-stream:
               schema:
-                $ref: '#/components/schemas/ServiceData'
-
+                type: string
+                format: binary
+  
   /Devices:
     get:
       summary: Returns the collection of imaging devices.
@@ -427,6 +478,15 @@ components:
       schema:
         type: integer
       example: 0
+      
+    isPDFA:
+      name: isPDFA
+      in: query
+      description: file type of output pdf
+      required: true
+      schema:
+        type: boolean
+      example: true
       
   schemas:
     EnumOCRType:
@@ -571,7 +631,7 @@ components:
             functionalUnit:
               type: object
           description: detailed information of the imaging device's properties
-    OcrProgress:
+    PageProcessingProgress:
       type: object
       properties:
         page:
@@ -584,8 +644,35 @@ components:
           example: 5
         completed:
           type: boolean
-          description: whether the OCR process has completed
+          description: whether the page process has been completed
           example: true
+        errorMessage:
+          type: string
+          description: error message when processing page
+          example: ""
+    OcrProcessingProgress:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: current page being processed
+          example: 3
+        totalPages:
+          type: integer
+          description: total pages in the document to be processed
+          example: 5
+        completed:
+          type: boolean
+          description: whether the OCR process has been completed
+          example: true
+        errorMessage:
+          type: string
+          description: error message when processing OCR
+          example: ""
+        canceled:
+          type: boolean
+          description: whether the OCR process has been canceled
+          example: false
     ServiceData:
       type: object
       properties:
@@ -650,6 +737,35 @@ components:
           type: integer
           $ref: "#/components/schemas/EnumScanType"
           example: 1
+          
+    PageSizeValidation:
+      type: object
+      properties:
+        warningPages:
+          type: array
+          items: 
+            example: [1, 2]
+          description: List of warning pages that exceeded the page size limitation
+        pageSizeLimitDisplay:
+          type: string
+          description: Display string of page size limitation
+          example: "20MB"
+          
+    FileSizeValidation:
+      type: object
+      properties:
+        isValid:
+          type: boolean
+          description: Indicate whether the to-be-created file exceed the limit or not
+        fileSizeLimitDisplay:
+          type: string
+          description: Display string of file size limitation
+          example: "100MB"
+        fileSizeDisplay:
+          type: string
+          description: Display string of to-be-created file size
+          example: "116MB"
+          
     AttachDocument:
       type: object
       properties:
@@ -686,7 +802,7 @@ components:
           description: whether the document will be saved locally or uploaded to ''fileUploadURL' endpoint
           $ref: '#/components/schemas/SaveToType'
 
-    ResizePage:
+    ResizePageRequest:
       type: object
       properties:
         clientID:
