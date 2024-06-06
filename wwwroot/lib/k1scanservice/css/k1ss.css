@@ -30,7 +30,7 @@
     }
 
 .k1ss-modal {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
@@ -63,6 +63,7 @@
 }
 
 .k1ss-wait-div {
+    position: fixed;
     z-index: 19999;
     top: 0;
     right: 0;
@@ -379,12 +380,17 @@
     background: url('../images/PageMove.png');
 }
 
+.k1ss-infor {
+    background: url('../images/Information.png');
+}
+
 .k1ss-btn.k1ss-disabled {
     border: none;
     box-shadow: none;
     background-color: #ddd;
     opacity: 0.2;
     cursor: not-allowed;
+    pointer-events: none;
 }
 
     .k1ss-btn.k1ss-disabled:hover, .k1ss-btn.k1ss-disabled:focus {
@@ -445,6 +451,7 @@
         color: #ddd;
         cursor: not-allowed;
         box-shadow: none;
+        pointer-events: none;
     }
 
 .k1ss-modal-download {
@@ -499,8 +506,11 @@
 .k1ss-delete-div,
 .k1ss-restore-div,
 .k1ss-reset-div,
+.k1ss-product-infor-div,
+.k1ss-pagesizewarning-div,
+.k1ss-ocrtimeout-div,
 .k1ss-resize-div {
-    position: absolute;
+    position: fixed;
     top: 66px;
     right: 0;
     left: 0;
@@ -510,13 +520,18 @@
 
 .k1ss-delete-div,
 .k1ss-restore-div,
-.k1ss-reset-div {
+.k1ss-restore-div,
+k1ss-ocrtimeout-div,
+.k1ss-pagesizewarning-div {
     top: 33%;
 }
 
+    .k1ss-product-infor-div .k1ss-dialog-body,
     .k1ss-delete-div .k1ss-dialog-body,
     .k1ss-restore-div .k1ss-dialog-body,
     .k1ss-reset-div .k1ss-dialog-body,
+    .k1ss-pagesizewarning-div .k1ss-dialog-body,
+    .k1ss-ocrtimeout-div .k1ss-dialog-body,
     .k1ss-resize-div .k1ss-dialog-body {
         width: 266px;
         padding: 20px;
@@ -527,14 +542,6 @@
         left: 36%;
     }
 
-    .k1ss-delete-div .k1ss-dialog-body,
-    .k1ss-restore-div .k1ss-dialog-body,
-    .k1ss-reset-div .k1ss-dialog-body {
-        width: 356px;
-    }
-
-        .k1ss-delete-div .k1ss-dialog-body .k1ss-form-group,
-        .k1ss-restore-div .k1ss-dialog-body .k1ss-form-group,
         .k1ss-resize-div .k1ss-dialog-body .k1ss-form-group {
             display: flex;
             margin-bottom: 6px;
@@ -578,6 +585,9 @@
         background-color: #0067c0;
     }
 
+
+            .k1ss-wait-div .k1ss-msgbox .k1ss-button,
+            .k1ss-product-infor-div .k1ss-dialog-body .k1ss-form-group .k1ss-button,
             .k1ss-confirm-div .k1ss-dialog-body .k1ss-form-group .k1ss-button,
             .k1ss-resize-div .k1ss-dialog-body .k1ss-form-group .k1ss-button {
                 border: none;
@@ -587,18 +597,20 @@
                 margin-top: 4px;
             }
 
-.k1ss-confirm-div .k1ss-dialog-body .k1ss-form-group .k1ss-okconfimbutton,
-.k1ss-resize-div .k1ss-dialog-body .k1ss-form-group .k1ss-okresize {
-    background-color: #0067c0;
-    margin-right: 6px;
-}
+            .k1ss-product-infor-div .k1ss-dialog-body .k1ss-form-group .k1ss-okproductinfor,
+            .k1ss-confirm-div .k1ss-dialog-body .k1ss-form-group .k1ss-okconfimbutton,
+            .k1ss-resize-div .k1ss-dialog-body .k1ss-form-group .k1ss-okresize {
+                background-color: #0067c0;
+                margin-right: 6px;
+            }
 
-.k1ss-confirm-div .k1ss-dialog-body .k1ss-form-group .k1ss-cancelconfimbutton,
-.k1ss-resize-div .k1ss-dialog-body .k1ss-form-group .k1ss-cancelresize {
-    background-color: #fff;
-    color: #000;
-    margin-left: 6px;
-}
+    .k1ss-wait-div .k1ss-msgbox .k1ss-cancelconfimbutton,
+    .k1ss-confirm-div .k1ss-dialog-body .k1ss-form-group .k1ss-cancelconfimbutton,
+    .k1ss-resize-div .k1ss-dialog-body .k1ss-form-group .k1ss-cancelresize {
+        background-color: #fff;
+        color: #000;
+        margin-left: 6px;
+    }
 
 .k1ss-resize-div .k1ss-dialog-body .k1ss-form-group .k1ss-resetthispage {
     background-color: #0067c0;
@@ -614,6 +626,11 @@
 
 .k1ss-confirm-div {
     top: 33%;
+    z-index: 1070;
+}
+
+.k1ss-product-infor-div {
+    top: 29%;
     z-index: 1070;
 }
 
@@ -637,3 +654,40 @@
     .k1ss-confirm-div .k1ss-dialog-body .k1ss-form-group .k1ss-button {
         width: 79px;
     }
+
+.k1ss-section-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.k1ss-filetype-restriction {
+    color: #337ab7;
+    font-size: 13px;
+    margin-left: 6px;
+}
+
+.k1ss-product-infor-div p {
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.k1ss-product-infor-div .k1ss-okproductinfor {
+    width: 50%;
+    font-size: 16px;
+}
+
+.k1ss-ocrtimeout-div .k1ss-dialog-body,
+.k1ss-pagesizewarning-div .k1ss-dialog-body {
+    width: 388px;
+}
+
+.k1ss-product-infor-div .k1ss-dialog-body {
+    width: 368px;
+}
+
+.k1ss-wait-div .k1ss-msgbox .k1ss-cancelconfimbutton {
+    margin: 0 auto;
+    margin-top: 10px;
+    display: block;
+    width: 25%;
+}

@@ -23,9 +23,8 @@
                 </select>
             </div>
         </div>
-        <div id="k1interface-visible" class="hide">
-
-            <div style="margin-top:12px"><label>Scan Document:</label></div>
+        <div id="k1interface-intialization" class="hide">
+            <div style="margin-top:12px"><label>Initialize Scan Process:</label></div>
             <div class="input-group">
                 <div class="input-group-btn">
                     <button id="scanbtn" type="button" class="btn btn-primary" aria-label="Bold">
@@ -37,53 +36,76 @@
 
         <div id="k1interface-hidden" class="hide">
             <div>
-                <div id="device-group" class="twain-feature-group" style="display: none;">
-                    <label>Device</label>
-                    <select id="sel-scanner" class="form-control"></select>
+                <div class="scanning-section">
+                    <div id="device-group" class="twain-feature-group" style="display: none;">
+                        <label>Device</label>
+                        <select id="sel-scanner" class="form-control"></select>
+                    </div>
+
+                    <div id="source-group" class="twain-feature-group" style="display: none;">
+                        <label>Document Source</label>
+                        <select id="sel-document-source" class="form-control"></select>
+                    </div>
+
+                    <div id="dpi-group" class="twain-feature-group" style="display: none;">
+                        <label>Resolution (DPI)</label>
+                        <select id="sel-dpi" class="form-control"></select>
+                    </div>
+
+                    <div id="color-group" class="twain-feature-group" style="display: none;">
+                        <label>Color</label>
+                        <select id="sel-color" class="form-control"></select>
+                    </div>
+
+                    <div id="size-group" class="twain-feature-group" style="display: none;">
+                        <label>Page Size</label>
+                        <select id="sel-page-size" class="form-control"></select>
+                    </div>
+
+                    <div id="duplex-group" class="twain-feature-group" style="display: none;">
+                        <label>Duplex</label>
+                        <select id="sel-duplex" class="form-control"></select>
+                    </div>
+
+                    <div class="input-group" style="margin-top:12px">
+                        <div class="input-group-btn">
+                            <button id="btn-acquire" type="button" class="btn btn-primary" aria-label="Bold">
+                                <span>Scan</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="source-group" class="twain-feature-group" style="display: none;">
-                    <label>Document Source</label>
-                    <select id="sel-document-source" class="form-control"></select>
-                </div>
+                <div class="finalize-section section-disabled" style="margin-top:12px">
+                    <div>
+                        <label>Output File Name</label>
+                        <input id="sel-output-name" class="form-control" type="text" placeholder="Please enter a file name" value="ScanFile">
+                    </div>
+                    <div>
+                        <label>Output File Type</label>
+                        <span class="filetype-restriction" style="display: none;">File types restricted for multiple page scans</span>
+                        <select id="sel-output" class="form-control"></select>
+                    </div>
+                    <div class="pdf-section">
+                        <label>OCR Type</label>
+                        <select id="sel-ocr-type" class="form-control"></select>
+                    </div>
 
-                <div id="dpi-group" class="twain-feature-group" style="display: none;">
-                    <label>Resolution (DPI)</label>
-                    <select id="sel-dpi" class="form-control"></select>
-                </div>
+                    @* <label>Save To</label>
+                    <select id="sel-save-to" class="form-control"></select> *@
 
-                <div id="color-group" class="twain-feature-group" style="display: none;">
-                    <label>Color</label>
-                    <select id="sel-color" class="form-control"></select>
-                </div>
-
-                <div id="size-group" class="twain-feature-group" style="display: none;">
-                    <label>Page Size</label>
-                    <select id="sel-page-size" class="form-control"></select>
-                </div>
-
-                <div id="duplex-group" class="twain-feature-group" style="display: none;">
-                    <label>Duplex</label>
-                    <select id="sel-duplex" class="form-control"></select>
-                </div>
-
-                <label>Output File Name</label>
-                <input id="sel-output-name" class="form-control" type="text" placeholder="Please enter a file name" value="ScanFile">
-
-                <label>Output File Type</label>
-                <select id="sel-output" class="form-control"></select>
-
-                <label>OCR Type</label>
-                <select id="sel-ocr-type" class="form-control"></select>
-
-                <label>Save To</label>
-                <select id="sel-save-to" class="form-control"></select>
-
-                <div class="input-group" style="margin-top:12px">
-                    <div class="input-group-btn">
-                        <button id="btn-acquire" type="button" class="btn btn-primary" aria-label="Bold">
-                            <span>Scan</span>
-                        </button>
+                    <div class="input-group" style="margin-top:12px">
+                        <div class="input-group-btn">
+                            <button id="btn-attach" type="button" class="btn btn-primary" aria-label="Bold">
+                                <span>ATTACH DOCUMENT</span>
+                            </button>
+                            <button id="btn-save-locally" type="button" class="btn btn-primary" aria-label="Bold" style="margin-left: 10px;">
+                                <span>SAVE LOCALLY</span>
+                            </button>
+                            <button id="btn-cancel-finalization" type="button" class="btn btn-primary" aria-label="Bold" style="margin-left: 10px;">
+                                <span>CANCEL</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

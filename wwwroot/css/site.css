@@ -26,3 +26,18 @@
         display: none;
     }
 }
+
+.section-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.filetype-restriction {
+    color: #337ab7;
+    font-size: 13px;
+    margin-left: 4px;
+}
+
+.finalize-section div {
+    margin-top: 6px;
+}

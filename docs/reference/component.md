@@ -49,7 +49,7 @@ K1WebTwain.Configure(configuration)
     });
 ```
 
-Note that in some circumstances it may be necessary to include a reset to clear certain errors in the Webtwain service at the time of the configure.  Do this as follows
+Note that in some circumstances it may be necessary to include a reset to clear certain errors in the Webtwain service at the time of the configure. Do this as follows
 ```javascript
 K1WebTwain.Configure(configuration)
     .then(function(response){
@@ -61,10 +61,10 @@ K1WebTwain.Configure(configuration)
         K1WebTwain.ResetService();
     })
 ```
-This is only required for Windows version of WebTwain Scanner Service where scanners may initially appear but are subsequently unavailable.   The call is supported on MacOS but performs no function on that platform.
+This is only required for Windows version of WebTwain Scanner Service where scanners may initially appear but are subsequently unavailable. The call is supported on MacOS but performs no function on that platform.
 
 4. Please follow the steps outlined by the selected **scannerInterface** value. If a value is not provided it will default to **K1WebTwain.Options.ScannerInterface.Visible**
-#### K1WebTwain.Options.ScannerInterface.None
+#### K1WebTwain.Options.ScannerInterface.Hidden
 1. Invoke **K1WebTwain.GetDevices** to get a list of available devices.
 ```javascript
 K1WebTwain.GetDevices()
@@ -75,7 +75,17 @@ K1WebTwain.GetDevices()
         ...
     });
 ```
-2. Invoke **K1WebTwain.Acquire** to start scan and generate a document with the provided request.
+2. Invoke **K1WebTwain.Device** with the id of seleted device from the list of available devices to get the device and and its capabilities.
+```javascript
+K1WebTwain.Device(deviceId)
+    .then(function(deviceInfo){
+        ...
+    })
+    .catch(function(err){
+        ...
+    });
+```
+3. Invoke **K1WebTwain.StartScan** to start scan the document's page(s) with the provided request.
 ```javascript
 var request = {
     deviceId: 0,
@@ -83,20 +93,47 @@ var request = {
     pixelTypeId: 0,
     pageSizeId: 0,
     documentSourceId: 0,
-    duplexId: 0,
-    filetype: K1WebTwain.Options.OutputFiletype.PDF,
-    ocrType: K1WebTwain.Options.OcrType.None,
-    filename: "test",
-    saveToType: K1WebTwain.Options.SaveToType.Upload
+    duplexId: 0
 };
 
-K1WebTwain.Acquire(request)
+K1WebTwain.StartScan(request)
     .then(function(response){
         ...
     })
     .catch(function(err){
         ...
     });
+```
+4. Invoke **K1WebTwain.GenerateDocument** to generate a document with the provided request.
+```javascript
+var request = {
+    filetype: K1WebTwain.Options.OutputFiletype.PDF,
+    ocrType: K1WebTwain.Options.OcrType.None,
+    filename: "test",
+    saveToType: K1WebTwain.Options.SaveToType.Upload
+};
+
+K1WebTwain.GenerateDocument(request)
+    .then(function(response){
+        ...
+    })
+    .catch(function(err){
+        ...
+    });
+```
+
+4.1. Optional - Invoke **K1WebTwain.ValidatePageSize** to pre-validate page(s) size and the to-be-generated PDF size for OCR processing.
+```javascript
+var request = {
+    filetype: K1WebTwain.Options.OutputFiletype.PDF,
+    ocrType: K1WebTwain.Options.OcrType.None,
+    saveToType: K1WebTwain.Options.SaveToType.Upload,
+    generateDocument: function () {
+        GenerateDocument(K1WebTwain.Options.SaveToType.Upload)
+    }
+};
+
+K1WebTwain.ValidatePageSize(request);
 ```
 
 #### K1WebTwain.Options.ScannerInterface.Desktop
@@ -110,23 +147,50 @@ K1WebTwain.GetDevices()
         ...
     });
 ```
-2. Invoke **K1WebTwain.Acquire** to start scan and generate a document with the provided request.
+2. Invoke **K1WebTwain.StartScan** to start scan the document's page(s) with the provided request.
 ```javascript
 var request = {
-    deviceId: 0,
-    filetype: K1WebTwain.Options.OutputFiletype.PDF,
-    ocrType: K1WebTwain.Options.OcrType.None,
-    filename: "test",
-    saveToType: K1WebTwain.Options.SaveToType.Upload
+    deviceId: 0
 };
 
-K1WebTwain.Acquire(request)
+K1WebTwain.StartScan(request)
     .then(function(response){
         ...
     })
     .catch(function(err){
         ...
     });
+```
+3. Invoke **K1WebTwain.GenerateDocument** to generate a document with the provided request.
+```javascript
+var request = {
+    filetype: K1WebTwain.Options.OutputFiletype.PDF,
+    ocrType: K1WebTwain.Options.OcrType.None,
+    filename: "test",
+    saveToType: K1WebTwain.Options.SaveToType.Upload
+};
+
+K1WebTwain.GenerateDocument(request)
+    .then(function(response){
+        ...
+    })
+    .catch(function(err){
+        ...
+    });
+```
+
+3.1. Optional - Invoke **K1WebTwain.ValidatePageSize** to pre-validate page(s) size and the to-be-generated PDF size for OCR processing.
+```javascript
+var request = {
+    filetype: K1WebTwain.Options.OutputFiletype.PDF,
+    ocrType: K1WebTwain.Options.OcrType.None,
+    saveToType: K1WebTwain.Options.SaveToType.Upload,
+    generateDocument: function () {
+        GenerateDocument(K1WebTwain.Options.SaveToType.Upload)
+    }
+};
+
+K1WebTwain.ValidatePageSize(request);
 ```
 #### K1WebTwain.Options.ScannerInterface.Visible
 - No additional actions are needed. The modal will be shown when the supplied scanButton is clicked.
