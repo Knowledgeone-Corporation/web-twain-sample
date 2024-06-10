@@ -251,7 +251,7 @@
 
 #### K1WebTwain.ValidatePageSize
 **type:** promise  
-**description:** pre-validate page(s) size and the to-be-generated PDF size for OCR processing..  
+**description:** pre-validate page(s) size and the to-be-generated PDF size for OCR processing.  
 **example:**  
 ```javascript
 {
@@ -262,8 +262,19 @@
         saveToType: K1WebTwain.Options.SaveToType.Upload
     };
 
-    K1WebTwain.GenerateDocument(request)
-        .then(function (response) {
+    K1WebTwain.ValidatePageSize(request);
+}
+```
+---
+
+#### K1WebTwain.ClearAllScannedPages
+**type:** promise  
+**description:** clear all scanned page(s) before scanning again.  
+**example:**  
+```javascript
+{
+    K1WebTwain.ClearAllScannedPages()
+        .then(function () {
             // 
             ...
         })

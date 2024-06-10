@@ -104,6 +104,20 @@ K1WebTwain.StartScan(request)
         ...
     });
 ```
+
+3.1. Optional - Invoke **K1WebTwain.ClearAllScannedPages** to clear all scanned page(s) before scanning again.
+```javascript
+K1WebTwain.ClearAllScannedPages()
+    .then(function () {
+        // 
+        ...
+    })
+    .catch(function (error) {
+        // Handle the errors
+        ...
+    });
+```
+
 4. Invoke **K1WebTwain.GenerateDocument** to generate a document with the provided request.
 ```javascript
 var request = {
