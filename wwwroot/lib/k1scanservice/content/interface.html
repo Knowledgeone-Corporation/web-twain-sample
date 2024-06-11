@@ -63,35 +63,40 @@
                 <div class="k1ss-lm-sep">
                 </div>
 
-                <div class="k1ss-group">
-                    <label>File Name</label>
-                    <input type="text" class="k1ss-filename k1ss-control" value="" />
+                <div class="k1ss-group k1ss-center" style="margin-bottom: 5px;">
+                    <input type="button" value="FINALIZE" class="k1ss-finalize k1ss-button k1ss-disabled" />
                 </div>
 
-                <div class="k1ss-group">
-                    <label>File Type</label>
-                    <select class="k1ss-filetype k1ss-control">
-                        <option value="PDF" selected="">PDF</option>
-                        <option value="PDF/A" selected="">PDF/A</option>
-                        <option value="TIF">TIF</option>
-                        <option class="k1ss-single-ft" value="JPG">JPG</option>
-                        <option class="k1ss-single-ft" value="GIF">GIF</option>
-                        <option class="k1ss-single-ft" value="BMP">BMP</option>
-                        <option class="k1ss-single-ft" value="PNG">PNG</option>
+                <div class="k1ss-finalize-section k1ss-section-disabled">
+                    <div class="k1ss-group">
+                        <label>File Name</label>
+                        <input type="text" class="k1ss-filename k1ss-control" value="" />
+                    </div>
 
-                    </select>
-                </div>
+                    <div class="k1ss-group">
+                        <label>File Type</label>
+                        <span class="k1ss-filetype-restriction" style="display: none;">File types restricted for multiple page scans</span>
+                        <select class="k1ss-filetype k1ss-control">
+                            <option value="PDF" selected="">PDF</option>
+                            <option value="PDF/A" selected="">PDF/A</option>
+                            <option value="TIF">TIF</option>
+                            <option class="k1ss-single-ft" value="JPG">JPG</option>
+                            <option class="k1ss-single-ft" value="GIF">GIF</option>
+                            <option class="k1ss-single-ft" value="BMP">BMP</option>
+                            <option class="k1ss-single-ft" value="PNG">PNG</option>
+                        </select>
+                    </div>
 
-                <div class="k1ss-ocr">
-                    <div class="k1ss-group k1ss-pdf">
-                        <label><input class="k1ss-chkocr" type="checkbox" /> OCR</label>
-                        <div class="k1ss-group-box">
-                            <label><input class="k1ss-radmapped" type="radio" name="k1ss_ocrtype" value="1" /> Mapped Text</label>
-                            <label><input class="k1ss-radembedded" type="radio" name="k1ss_ocrtype" value="2" /> Embedded Text</label>
+                    <div class="k1ss-ocr">
+                        <div class="k1ss-group k1ss-pdf">
+                            <label><input class="k1ss-chkocr" type="checkbox" /> OCR</label>
+                            <div class="k1ss-group-box">
+                                <label><input class="k1ss-radmapped" type="radio" name="k1ss_ocrtype" value="1" /> Mapped Text</label>
+                                <label><input class="k1ss-radembedded" type="radio" name="k1ss_ocrtype" value="2" /> Embedded Text</label>
+                            </div>
                         </div>
                     </div>
                 </div>
-
                 <div class="k1ss-group k1ss-center">
                     <input type="button" value="ATTACH DOCUMENT" class="k1ss-attach k1ss-button k1ss-disabled" />
                     <input type="button" value="SAVE LOCALLY" class="k1ss-save-locally k1ss-button k1ss-disabled" />
@@ -121,6 +126,10 @@
                     <div class="k1ss-tbar-sep"></div>
                     <a class="k1ss-deleteimg k1ss-btn k1ss-disabled" title="Delete Page"></a>
                     <a class="k1ss-deleteall k1ss-btn k1ss-disabled" title="Delete All Page(s)"></a>
+                    <div class="k1ss-tbar-sep"></div>
+                    <div style="display: inline-block;">
+                        <a class="k1ss-infor k1ss-btn" title="Product Information"></a>
+                    </div>
                     <button type="button" class="k1ss-close" title="Close Scanning Interface">&times;</button>
                 </div>
 
@@ -190,6 +199,9 @@
             <div class="k1ss-mb-mt k1ss-progress">
                 <div class="k1ss-progress-bar" style="width: 100%;"></div>
             </div>
+            <div class="k1ss-form-group k1ss-progress-button" style="display:none">
+                <button class="k1ss-cancelprogress k1ss-button k1ss-cancelconfimbutton">Cancel</button>
+            </div>
         </div>
     </div>
     <div class="k1ss-resize-div" style="display:none">
@@ -220,7 +232,7 @@
                 <button class="k1ss-resetallpages k1ss-button">Reset all pages</button>
             </div>-->
         </div>
-    </div> 
+    </div>
     <div class="k1ss-reset-div k1ss-confirm-div" style="display:none">
         <div class="k1ss-dialog-body">
             <h3 style="margin-top: 0;">Reset Page(s)</h3>
@@ -259,6 +271,45 @@
                 <input type="hidden" id="deletePageType" name="deletePageType" value="0">
                 <button class="k1ss-okdelete k1ss-button k1ss-okconfimbutton">OK</button>
                 <button class="k1ss-canceldelete k1ss-button k1ss-cancelconfimbutton">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="k1ss-product-infor-div" style="display:none">
+        <div class="k1ss-dialog-body">
+            <h3 style="margin-top: 0; font-weight: 600;">About</h3>
+            <div class="k1ss-form-group" style="margin-top: 18px; margin-bottom: 18px;">
+                <p class="k1ss-product-name">Knowledgeone WebTWAIN SDK</p>
+                <p class="k1ss-product-version"></p>
+            </div>
+            <div class="k1ss-form-group" style=" display: flex; justify-content: center">
+                <button class="k1ss-okproductinfor k1ss-button">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="k1ss-pagesizewarning-div k1ss-confirm-div" style="display:none">
+        <div class="k1ss-dialog-body">
+            <h3 class="k1ss-deletetitle" style="margin-top: 0;">Warning!</h3>
+            <div class="k1ss-form-group">
+                <p class="k1ss-warningmessage">Press OK to continue or Cancel?</p>
+            </div>
+            <div class="k1ss-form-group confirm-buttons">
+                <button class="k1ss-continueocr k1ss-button k1ss-okconfimbutton">OK</button>
+                <button class="k1ss-cancelocr k1ss-button k1ss-cancelconfimbutton">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="k1ss-ocrtimeout-div k1ss-confirm-div" style="display:none">
+        <div class="k1ss-dialog-body">
+            <h3 class="k1ss-deletetitle" style="margin-top: 0;">Cancel OCR Processing</h3>
+            <div class="k1ss-form-group">
+                <p>Would you like to cancel OCR processing?</p>
+            </div>
+            <div class="k1ss-form-group confirm-buttons">
+                <button class="k1ss-okecancelocr k1ss-button k1ss-okconfimbutton">Yes</button>
+                <button class="k1ss-closecancelocr k1ss-button k1ss-cancelconfimbutton">No</button>
             </div>
         </div>
     </div>

@@ -59,48 +59,7 @@
       "id":2,
       "name":"Samsung SCX-4623 Series",
       "isDefault":true,
-      "documentSourceIds":{
-         "0":{
-            "name":"Flatbed",
-            "id":0,
-            "resolutionIds":{
-               "0":"75",
-               "1":"100",
-               "2":"150"
-            },
-            "pixelTypeIds":{
-               "0":"BW"
-            },
-            "pageSizeIds":{
-               "0":"USLetter",
-               "1":"USExecutive",
-               "2":"USStatement"
-            },
-            "duplexIds":{
-               
-            }
-         },
-         "1":{
-            "name":"Feeder",
-            "id":1,
-            "resolutionIds":{
-               "0":"75",
-               "1":"100",
-               "2":"150"
-            },
-            "pixelTypeIds":{
-               "0":"BW"
-            },
-            "pageSizeIds":{
-               "0":"USLetter",
-               "1":"USLegal",
-               "2":"USExecutive"
-            },
-            "duplexIds":{
-               "8":"None"
-            }
-         }
-      }
+      "documentSourceIds":{}
    }
 }
 ```
@@ -200,7 +159,7 @@
 ##### Acquire Response
 **type:** object  
 **description:** details about the generated file  
-```json
+```json5
 {
     filename: "abc", // output filename
     fileLength: 123, // file size in bytes
@@ -213,12 +172,126 @@
 ```
 ---
 
+#### K1WebTwain.StartScan
+**type:** promise  
+**description:** instantiates a session with the selected image acquisition device and start scanning.  
+**example:**  
+```javascript
+{
+    var request = {
+        deviceId: 1,
+        resolutionId: 1,
+        pixelTypeId: 1,
+        pageSizeId: 1,
+        documentSourceId: 0,
+        duplexId: 0
+    };
+
+    K1WebTwain.StartScan(request)
+        .then(function (response) {
+            // 
+            ...
+        })
+        .catch(function (error) {
+            // Handle the errors
+            ...
+        });
+}
+```
+##### StartScan Response
+**type:** object  
+**description:** details about the generated file  
+```json5
+{
+    success: true, // scanning result
+    pageCount: 10, // total number of scanned page(s)
+}
+```
+---
+
+#### K1WebTwain.GenerateDocument
+**type:** promise  
+**description:** generates a document from scanned (pages).  
+**example:**  
+```javascript
+{
+    var request = {
+        filetype: K1WebTwain.Options.OutputFiletype.PDF,
+        ocrType: K1WebTwain.Options.OcrType.None,
+        filename: test,
+        saveToType: K1WebTwain.Options.SaveToType.Upload
+    };
+
+    K1WebTwain.GenerateDocument(request)
+        .then(function (response) {
+            // 
+            ...
+        })
+        .catch(function (error) {
+            // Handle the errors
+            ...
+        });
+}
+```
+##### GenerateDocument Response
+**type:** object  
+**description:** details about the generated file  
+```json5
+{
+    filename: "abc", // output filename
+    fileLength: 123, // file size in bytes
+    sizeDisplay: "1.23 MB", // converted file size
+    extension: ".pdf", // file type extension
+    hasOcrRequest: false, //indicates if there's an Ocr process in progress for a PDF-type document
+    uploadResponse: { }, // response returned from the file upload route,
+    saveToType: K1WebTwain.Options.SaveToType.Local // option to upload the processed file or save it locally
+}
+```
+---
+
+#### K1WebTwain.ValidatePageSize
+**type:** promise  
+**description:** pre-validate page(s) size and the to-be-generated PDF size for OCR processing.  
+**example:**  
+```javascript
+{
+    var request = {
+        filetype: K1WebTwain.Options.OutputFiletype.PDF,
+        ocrType: K1WebTwain.Options.OcrType.None,
+        filename: test,
+        saveToType: K1WebTwain.Options.SaveToType.Upload
+    };
+
+    K1WebTwain.ValidatePageSize(request);
+}
+```
+---
+
+#### K1WebTwain.ClearAllScannedPages
+**type:** promise  
+**description:** clear all scanned page(s) before scanning again.  
+**example:**  
+```javascript
+{
+    K1WebTwain.ClearAllScannedPages()
+        .then(function () {
+            // 
+            ...
+        })
+        .catch(function (error) {
+            // Handle the errors
+            ...
+        });
+}
+```
+---
+
 ## Request Objects
 
 #### ConfigurationRequest
 **type:** object  
 **description:** request object to set the K1WebTwain configuration.  
-```json
+```json5
 {
     onComplete: function,
     viewButton: HTMLElement,
@@ -236,7 +309,7 @@
 #### AcquireRequest
 **type:** object  
 **description:** request object to set the K1WebTwain acquisition.  
-```json
+```json5
 {
     deviceId: integer,
     resolutionId: integer,
