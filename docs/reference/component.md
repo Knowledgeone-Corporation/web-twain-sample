@@ -75,7 +75,7 @@ K1WebTwain.GetDevices()
         ...
     });
 ```
-2. Invoke **K1WebTwain.Device** with the id of seleted device from the list of available devices to get the device and and its capabilities.
+2. Invoke **K1WebTwain.Device** with the id of selected device from the list of available devices to get the device and and its capabilities.
 ```javascript
 K1WebTwain.Device(deviceId)
     .then(function(deviceInfo){
@@ -105,7 +105,7 @@ K1WebTwain.StartScan(request)
     });
 ```
 
-3.1. Optional - Invoke **K1WebTwain.ClearAllScannedPages** to clear all scanned page(s) before scanning again.
+3.1. Optional - Invoke **K1WebTwain.ClearAllScannedPages** to clear all scanned pages before scanning again.
 ```javascript
 K1WebTwain.ClearAllScannedPages()
     .then(function () {
@@ -176,7 +176,7 @@ K1WebTwain.StartScan(request)
     });
 ```
 
-2.1. Optional - Invoke **K1WebTwain.ClearAllScannedPages** to clear all scanned page(s) before scanning again.
+2.1. Optional - Invoke **K1WebTwain.ClearAllScannedPages** to clear all scanned pages before scanning again.
 ```javascript
 K1WebTwain.ClearAllScannedPages()
     .then(function () {
