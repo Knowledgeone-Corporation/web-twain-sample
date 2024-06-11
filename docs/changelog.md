@@ -5,14 +5,14 @@
 - Enhanced issue troubleshooting with more concise logging messages and additional tracing information.
 - UI and UX enhancements for modifying, finalizing and generating documents.
 - Enhanced resizing function with real-time progress tracking, better error handling, and error reporting.
-- Updated OCR process with pre-validation of page(s) size and the to-be-generated PDF size.
-- Additional updates to the OCR process, including the ability to cancel long-running OCR tasks, better error handling, and more graceful exiting.
+- Updated OCR process with pre-validation of page sizes and the final PDF size.
+- Additional updates to the OCR process, including the ability to cancel long-running OCR tasks, better error handling, and graceful exiting.
 - Performance enhancements for processing, modifying, and generating documents that containing large/complex pages.
 
 ### Version 2.3.2
 - Improves logging with useful information for troubleshooting issues on both Windows and MacOS
-- Displays the version and product information of Knowledgeone WebTWAINSdk service on the UI (for Web and Visible modes)
-- Verify the available resolutions on a scanner if it is suitable for scanning 
+- Displays the version and product information of Knowledgeone WebTWAIN SDK service on the UI (for Web and Visible modes)
+- Verify the available scanner resolutions to ensure suitability for scanning 
 - Update the version-checking function with the correct checking message and post-checking action
 
 ### Version 2.3.1
