@@ -558,8 +558,7 @@ function SetDefaultScanSetting() {
 
     $("#sel-output").change(function () {
         var outputType = $(this).val();
-        if (outputType == K1WebTwain.Options.OutputFiletype.PDF ||
-            outputType == K1WebTwain.Options.OutputFiletype['PDF/A']) {
+        if (IsPDF(outputType)) {
             $(".pdf-section").show();
         } else {
             $(".pdf-section").hide();
@@ -571,9 +570,7 @@ function SetDefaultScanSetting() {
     $("#sel-ocr-type").change(function () {
         var outputType = $("#sel-output").val();
         var ocrType = $(this).val();
-        var isUseOcr = (outputType == K1WebTwain.Options.OutputFiletype.PDF ||
-            outputType == K1WebTwain.Options.OutputFiletype['PDF/A']) &&
-            ocrType != K1WebTwain.Options.OcrType.None;
+        var isUseOcr = IsPDF(outputType) && ocrType != K1WebTwain.Options.OcrType.None;
         SaveDefaultScanSettings(isUseOcr);
     })
     //populate_dropdown($("#sel-save-to"), K1WebTwain.Options.SaveToType);
@@ -587,4 +584,8 @@ function SetDefaultScanSetting() {
             $("#sel-ocr-type").val(scanSettings.UseOCR ? scanSettings.OCRType : K1WebTwain.Options.OcrType.None).trigger('change');
         }
     }
+}
+
+function IsPDF(fileType) {
+    return fileType === K1WebTwain.Options.OutputFiletype.PDF || fileType === K1WebTwain.Options.OutputFiletype['PDF/A'];
 }
