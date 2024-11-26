@@ -289,13 +289,23 @@ paths:
               schema: 
                 $ref: '#/components/schemas/PageSizeValidation'
                 
-  /ValidatePdfSize:
+  /StartValidatePdfSize:
     get:
-      summary: Validate the pdf size before ORCing.
-      description: Validate the pdf size before ORCing to indicate whether the pdf page is exceed the upload limit or not.<br/> Warning limit can be set through <strong>FileUploadLimitInMB</strong> setting in <strong>K1ScanService.exe.config</strong>. A value of <strong>0(zero)</strong> means no warning at all. No setting means take default of <strong>100MB</strong>
+      summary: Start validate the pdf size before ORCing.
+      description: Validate the pdf size before ORCing to indicate whether the pdf page is exceed the upload limit or not.<br/> Warning limit can be set through <strong>FileUploadLimitInMB</strong> setting in <strong>K1ScanService.exe.config</strong>.
       parameters:
         - $ref: '#/components/parameters/clientID'
         - $ref: '#/components/parameters/isPDFA'
+      responses:
+        '200':
+          description: Validate pdf file size job started successfully
+                
+  /GetValidatePdfSizeProgress:
+    get:
+      summary: Get the pdf size validation progress and result.
+      description: Polling to get the validation progress and get the pdf size validation result. A value of <strong>0(zero)</strong> means no warning at all. No setting means take default of <strong>100MB</strong>
+      parameters:
+        - $ref: '#/components/parameters/clientID'
       responses:
         '200':
           description: Returns a FileSizeValidation object
@@ -765,6 +775,14 @@ components:
           type: string
           description: Display string of to-be-created file size
           example: "116MB"
+        error:
+          type: string
+          description: Error message when validating pdf file size
+          example: "Error"
+        completed:
+          type: boolean
+          description: Indicate wether the validation job completed or not
+          example: true
           
     AttachDocument:
       type: object
