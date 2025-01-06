@@ -27,6 +27,7 @@ paths:
     post:
       summary: Initialises the service.
       description: Starts a new session with the service. <br/> You will need to generate a unique identifer for the session, this will be used for subsequent calls. (e.g. the current time in ticks). <br/> This call will return the a collection of imaging devices, the version of the installed service and whether the OCR option is enabled.
+      deprecated: true
       parameters: 
         - $ref: '#/components/parameters/clientID'
         - $ref: '#/components/parameters/licenseFile'
@@ -37,6 +38,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceData'
+                
+  /ResetService:
+    get:
+      summary: Restart the service to reset the list of imaging devices.
+      description: Restart the service to reset the list of imaging devices. <br> Returns HTTP200 OK if the service is successfully restarted.
+      deprecated: true
+      responses:
+        '200':
+          description: The service is successfully restarted.
 
   /ServiceAvailable:
     get:
@@ -56,6 +66,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FetchVersion'
+                
+  /Devices:
+    get:
+      summary: Returns the collection of imaging devices.
+      description: Retrieves the collection containing the imaging devices available on the user's machine.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a a collection containing the imaging devices available on the user's machine
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: "#/components/schemas/Source"
+  /Device:
+    get:
+      summary: Return properties of the specified imaging device.
+      description: Retrieves the properties of the specified imaging device. <br> Properties are Source Type, Pixel Type, Resolution Type, Duplex (Feeder), Page Size,...
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Return properties of the specified imaging device.
+          content:
+            application/json:
+              schema: 
+                type: object
+                $ref: "#/components/schemas/Source"
+                
+  /CheckIsFeederLoaded:
+    get:
+      summary: Checks if document feeder is loaded or empty for the specified imaging device.
+      description: Checks if document feeder is loaded with paper or empty for the specified imaging device.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Return boolean result.
+          content:
+            application/json:
+              schema: 
+                type: boolean
                 
   /StartScan:
     post:
@@ -79,7 +135,7 @@ paths:
   /CheckScanStatus:
     get:
       summary: Checks if the current image acquisition session has completed.
-      description: Poll this method once a session has been instantiated with the scanner. <br/> The scanRunning property is set to false on completion. <br/> Return whether the native scanner is still running, if an error has been encountered and the total pages scanned.
+      description: Poll this method once a session has been instantiated with the scanner. <br/> The 'scanRunning' property is set to false on completion. <br/> Return whether the native scanner is still running, if an error has been encountered and the total pages scanned.
       parameters:
         - $ref: '#/components/parameters/clientID'
       responses:
@@ -89,6 +145,42 @@ paths:
             application/json:
               schema: 
                 $ref: '#/components/schemas/StatusMessage'
+                
+  /AddDocument:
+    post:
+      summary: Add/import document to current pages.
+      description: Start adding or importing document types such as PDF, PDF/A, TIFF, TIF, JPG, JPEG, PNG, BMP, and GIF, treating them as or resembling scanned documents.<br/> Once this method has been invoked you will need to poll GetAddingDocumentProgress to determine if the adding/importing has ended.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/scanType'
+        - $ref: '#/components/parameters/autoDeskew'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Adding/Importing document process is successfully started
+
+  /GetAddingDocumentProgress:
+    get:
+      summary: Checks if the current adding/importing document has completed.
+      description: Poll this method once start adding/importing document. <br/> The 'completed' property is set to true on completion. <br/> Return whether the adding/importing process is still running, if an error has been encountered and the total pages added/imported
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a AddingDocumentProgress object.
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/AddingDocumentProgress'
                 
   /GetPageCount:
     get:
@@ -124,7 +216,7 @@ paths:
           content:
             application/json:
               schema: 
-                $ref: '#/components/schemas/ImageData'
+                $ref: '#/components/schemas/ImageDataResponse'
 
   /SavePage:
     get:
@@ -197,6 +289,22 @@ paths:
                 type: boolean
                 description: whether the deletion was successful.
                 example: true
+                
+  /DeleteAllPages:
+    post:
+      summary: Deletes all the acquired pages from the imaging device.
+      description: This operation can not be reversed.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns whether the pages were deleted or not
+          content:
+            application/json:
+              schema: 
+                type: boolean
+                description: whether the deletion was successful.
+                example: true
 
   /ResizePage:
     post:
@@ -225,21 +333,32 @@ paths:
               schema: 
                 $ref: '#/components/schemas/PageProcessingProgress'
                 
-  /DeleteAllPages:
+  /DeskewPage:
     post:
-      summary: Deletes all the acquired pages from the imaging device.
-      description: This operation can not be reversed.
+      summary: Start de-skewing page(s) process.
+      description: Start resizing page(s) with the supplied parameters. <br/> You need to poll GetResizingProgress API to get the job status.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeskewPageRequest"
+      responses:
+        '200':
+          description: De-skewing process is successfully started
+          
+  /GetDeskewingProgress:
+    get:
+      summary: Checks if the de-skewing process has completed on the clients machine.
+      description: Poll this method if the DeskewPage request has been invoked. <br/>Return whether the de-skewing process has completed and the current progress.
       parameters:
         - $ref: '#/components/parameters/clientID'
       responses:
         '200':
-          description: Returns whether the pages were deleted or not
+          description: Return PageProcessingProgress object for process status
           content:
             application/json:
               schema: 
-                type: boolean
-                description: whether the deletion was successful.
-                example: true
+                $ref: '#/components/schemas/PageProcessingProgress'
                 
   /RestorePage:
     post:
@@ -256,7 +375,7 @@ paths:
           content:
             application/json:
               schema: 
-                $ref: '#/components/schemas/ImageData'
+                $ref: '#/components/schemas/ImageDataResponse'
             
   /RestoreAllPages:
     post:
@@ -273,7 +392,7 @@ paths:
           content:
             application/json:
               schema: 
-                $ref: '#/components/schemas/ImageData'
+                $ref: '#/components/schemas/ImageDataResponse'
                 
   /ValidatePageSize:
     get:
@@ -386,60 +505,203 @@ paths:
             application/octet-stream:
               schema:
                 type: string
-                format: binary
-  
-  /Devices:
+                format: binary'
+                
+  /GetListFormProcessingTemplates:
     get:
-      summary: Returns the collection of imaging devices.
-      description: Retrieves the collection containing the imaging devices available on the user's machine.
+      summary: Returns the list of form processing templates.
+      description: Retrieve the list of form processing templates.
       parameters:
         - $ref: '#/components/parameters/clientID'
       responses:
         '200':
-          description: Returns a a collection containing the imaging devices available on the user's machine
+          description: Returns the list of form processing templates.
           content:
             application/json:
               schema: 
                 type: array
-                items: 
-                  $ref: "#/components/schemas/Source"
-  /Device:
+                items:
+                  type: string
+                  description: Template name.
+                example: [ "MonthlyInvoice", "WeeklyInvoice" ]
+                
+  /GetFormProcessingTemplate:
     get:
-      summary: Return properties of the specified imaging device.
-      description: Retrieves the properties of the specified imaging device. <br> Properties are Source Type, Pixel Type, Resolution Type, Duplex (Feeder), Page Size,...
+      summary: Returns the information of selected form processing template.
+      description: Retrieve the information of selected form processing template. <br> Which included the name of the template and region pages that contain multiple regions(location of a field to extract data)
       parameters:
         - $ref: '#/components/parameters/clientID'
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/templateName'
       responses:
         '200':
-          description: Return properties of the specified imaging device.
+          description: Returns the information of selected form processing. <br> Which included the name of the template and region pages that contain multiple regions(location of a field to extract data)
           content:
             application/json:
               schema: 
-                type: object
-                $ref: "#/components/schemas/Source"
-  /CheckIsFeederLoaded:
-    get:
-      summary: Checks if document feeder is loaded or empty for the specified imaging device.
-      description: Checks if document feeder is loaded with paper or empty for the specified imaging device.
-      parameters:
-        - $ref: '#/components/parameters/clientID'
-        - $ref: '#/components/parameters/id'
+                $ref: '#/components/schemas/FormProcessingTemplateResponse'
+                
+  /SaveFormProcessingTemplate:
+    post:
+      summary: Save the designed form processing template.
+      description: Save the pages of regions that contain the regions with typically name and location of fields.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveFormProcessingTemplateRequest"
       responses:
         '200':
-          description: Return boolean result.
+          description: Successfully save the form processing template
+          
+  /DeleteFormProcessingTemplate:
+    delete:
+      summary: Delete the selected form processing template.
+      description: Delete the selected form processing template.
+      parameters:
+      - $ref: '#/components/parameters/clientID'
+      - $ref: '#/components/parameters/templateName'
+      responses:
+        '200':
+          description: Successfully delete the form processing template
+          
+  /GetListBarcodeTemplates:
+    get:
+      summary: Returns the list of barcode recognition templates.
+      description: Retrieve the list of barcode recognition templates.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns the list of barcode recognition templates.
           content:
             application/json:
               schema: 
-                type: boolean
-  /ResetService:
+                type: array
+                items:
+                  type: string
+                  description: Template name.
+                example: [ "BarcodeOnPage", "BarcodeOnSeparate" ]
+                
+  /GetBarcodeTemplate:
     get:
-      summary: Restart the service to reset the list of imaging devices.
-      description: Restart the service to reset the list of imaging devices. <br> Returns HTTP200 OK if the service is successfully restarted.
+      summary: Returns the information of selected barcode recognition template.
+      description: Retrieve the information of selected barcode recognition template.<br> Which included the name of the template and location of the barcode
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - $ref: '#/components/parameters/templateName'
       responses:
         '200':
-          description: The service is successfully restarted.
-
+          description: Returns the information of selected form processing.<br> Which included the name of the template and location of the barcode
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/BarcodeTemplateResponse'
+                
+  /SaveBarcodeTemplate:
+    post:
+      summary: Save the designed barcode recognition template.
+      description: Save the barcode recognition template that contain the location of the barcode.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveBarcodeTemplateRequest"
+      responses:
+        '200':
+          description: Successfully save the barcode recognition template
+          
+  /DeleteBarcodeTemplate:
+    delete:
+      summary: Delete the selected barcode recognition template.
+      description: Delete the selected barcode recognition template.
+      parameters:
+      - $ref: '#/components/parameters/clientID'
+      - $ref: '#/components/parameters/templateName'
+      responses:
+        '200':
+          description: Successfully delete the barcode recognition template
+  
+  /CheckBarcodePages:
+    get:
+      summary: Start the job to check and extract pages that contains barcode(s).
+      description: Start the job to check and extract pages that contains barcode(s). <br/> You need to poll 'GetBarcodeCheckingProgress' API to get the job status.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Checking for pages that contain barcodes process is successfully started
+          
+  /GetBarcodeCheckingProgress:
+    get:
+      summary: Get barcode pages checking progress with contains pages that have barcode(s).
+      description: Poll this method if the CheckBarcodePages request has been invoked. <br/>Return whether the Checking for pages that contain barcodes process has completed and the current progress.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Return 'BarcodeCheckingProgress' object for process status
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/BarcodeCheckingProgress'
+  
+  /RecognizeBarcode:
+    post:
+      summary: Start barcode(s) recognizing job.
+      description: Start barcode(s) recognizing job with the supplied parameters. <br/> You need to poll 'GetBarcodeRecognizingProgress' API to get the job status.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecognizeBarcodeRequest"
+      responses:
+        '200':
+          description: Barcode recognition process is successfully started
+  
+  /GetBarcodeRecognizingProgress:
+    get:
+      summary: Get barcode(s) recognizing progress.
+      description: Poll this method if the RecognizeBarcode request has been invoked. <br/>Return whether the barcode recognition process has completed and the current progress.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Return 'BarcodeRecognizingProgress' object for process status
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/BarcodeRecognizingProgress'
+                
+  /ApplyBarcodeSelection:
+    post:
+      summary: Apply user selected barccode for page(s) that contains multiple barcodes.
+      description: Apply user selected barccode for page(s) that contains multiple barcodes.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplyBarcodeSelectionRequest"
+      responses:
+        '200':
+          description: Selected barcode is applied successfully
+          
+  /ApplyUserProvidedBarcodes:
+    post:
+      summary: Apply user provided barccode for page(s) that didn't contains barcode or barcode(s) cannot be recognized.
+      description: Apply user provided barccode for page(s) that didn't contains barcode or barcode(s) cannot be recognized.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserProvidedBarcodeRequest"
+      responses:
+        '200':
+          description: Barcode data of page with user provided barcode.
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/BarcodeData'
+                
 components:
   parameters:
     clientID:
@@ -489,6 +751,24 @@ components:
         type: integer
       example: 0
       
+    currentPage:
+      name: currentPage     
+      in: query
+      description: current page that we are working on
+      required: true
+      schema:
+        type: integer
+      example: 0
+    
+    autoDeskew:
+      name: autoDeskew     
+      in: query
+      description: whether to automatically de-skew the scanned page(s) or not.
+      required: true
+      schema:
+        type: boolean
+      example: false
+      
     isPDFA:
       name: isPDFA
       in: query
@@ -497,6 +777,59 @@ components:
       schema:
         type: boolean
       example: true
+      
+    scanType:
+      name: scanType     
+      in: query
+      required: true
+      description: whether to automatically de-skew the scanned page(s) or not.
+      schema:
+        $ref: '#/components/schemas/EnumScanType'
+        
+    templateName:
+      name: templateName
+      in: query
+      description: name of the template to be used for processing
+      required: true
+      schema:
+        type: string
+      example: MonthlyInvoice
+      
+    templateId:
+      in: query
+      name: templateId
+      required: true
+      description: id of the template to be used for processing
+      schema:
+        type: string
+      example: MonthlyInvoice
+      
+    pageNumber:
+      name: pageNumber     
+      in: query
+      description: index of page to work with
+      required: true
+      schema:
+        type: integer
+      example: 1
+      
+    pageIndex:
+      name: pageIndex     
+      in: query
+      description: index of page to work with
+      required: true
+      schema:
+        type: integer
+      example: 1
+      
+    isEditting:
+      name: isEditting
+      in: query
+      description: whether editting an exsiting template or adding a new one
+      required: true
+      schema:
+        type: boolean
+      example: false
       
   schemas:
     EnumOCRType:
@@ -521,6 +854,13 @@ components:
         - 1
         - 2
         - 3
+    
+    BarcodeLocation:
+      description: '0: BarcodeOnCoverSheet - Barcode can be found on cover sheet<br/>1: BarcodeOnDocument - Barcode can be found on document'
+      type: integer
+      enum:
+        - 0
+        - 1
 
     FileTypes:
       type: string
@@ -546,8 +886,8 @@ components:
         - 0
         - 1
 
-    ResetPageType:
-      description: '0: ThisPage - Reset only this resized page<br/>1: AllPages - Reset all resized pages'
+    EnumModifyPageType:
+      description: '0: ThisPage - Modify only this page<br/>1: AllPages - Modify all pages'
       type: integer
       enum:
         - 0
@@ -584,6 +924,7 @@ components:
           type: integer
           description: whether the document will be saved locally or uploaded to 'fileUploadURL' endpoint
           $ref: '#/components/schemas/SaveToType'
+          
     StatusMessage:
       type: object
       properties:
@@ -603,6 +944,7 @@ components:
           type: integer
           description: total pages scanned
           example: 5
+          
     ImageData:
       type: object
       properties:
@@ -617,6 +959,30 @@ components:
         image:
           type: string
           description: base64 encoded string
+          
+    ImageDataResponse:
+      type: object
+      properties:
+        clientID:
+          type: integer
+          description: unique identifier for the session
+          example: 1619662600769
+        page:
+          description: the current page index
+          type: integer
+          example: 3
+        image:
+          type: string
+          description: base64 encoded string
+        horizontalDPI:
+          description: the page's horizontal DPI/Resolution
+          type: number
+          example: 600
+        verticalDPI:
+          description: the page's vertical DPI/Resolution
+          type: number
+          example: 600
+          
     Source:
       type: object
       properties:
@@ -641,6 +1007,7 @@ components:
             functionalUnit:
               type: object
           description: detailed information of the imaging device's properties
+          
     PageProcessingProgress:
       type: object
       properties:
@@ -660,6 +1027,39 @@ components:
           type: string
           description: error message when processing page
           example: ""
+        result:
+          type: string
+          description: result message when processing page
+          example: ""
+          
+    AddingDocumentProgress:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: current page being processed
+          example: 2
+        totalPages:
+          type: integer
+          description: total pages in the document to be processed
+          example: 5
+        completed:
+          type: boolean
+          description: whether the page process has been completed
+          example: true
+        errorMessage:
+          type: string
+          description: error message when processing page
+          example: ""
+        result:
+          type: string
+          description: result message when processing page
+          example: ""
+        totalAddingPages:
+          type: integer
+          description: total adding/importing page(s)
+          example: 3
+          
     OcrProcessingProgress:
       type: object
       properties:
@@ -683,6 +1083,7 @@ components:
           type: boolean
           description: whether the OCR process has been canceled
           example: false
+          
     ServiceData:
       type: object
       properties:
@@ -699,6 +1100,7 @@ components:
           description: the version of the service installed on the user's machine.
           type: string
           example: 1.0.0
+          
     FetchVersion:
       type: object
       properties:
@@ -706,6 +1108,7 @@ components:
           description: The version of the installed service.
           type: string
           example: 1.0.0
+          
     StartScan:
       type: object
       properties:
@@ -747,6 +1150,10 @@ components:
           type: integer
           $ref: "#/components/schemas/EnumScanType"
           example: 1
+        autoDeskew:
+          type: boolean
+          description: whether to automatically de-skew the scanned page(s) or not.
+          example: false
           
     PageSizeValidation:
       type: object
@@ -819,6 +1226,12 @@ components:
           type: integer
           description: whether the document will be saved locally or uploaded to ''fileUploadURL' endpoint
           $ref: '#/components/schemas/SaveToType'
+        isBarcodeProcessing:
+          type: boolean
+          description: whether to recognize barcodes on the document and name them output page(s) by recognized barcode result
+          example: false
+        templateId:
+          $ref: '#/components/parameters/templateId'
 
     ResizePageRequest:
       type: object
@@ -843,6 +1256,18 @@ components:
           type: boolean
           description: where resize request will apply for all pages or only selected page
           example: false
+          
+    DeskewPageRequest:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        page:
+          $ref: '#/components/parameters/page'
+        deskewPageType:
+          type: integer
+          description: whether to de-skew all page(s) or only selected page
+          $ref: '#/components/schemas/EnumModifyPageType'
 
     ResetPage:
       type: object
@@ -854,7 +1279,7 @@ components:
         resetType:
           type: integer
           description: whether reset all resized page(s) or only selected page
-          $ref: '#/components/schemas/ResetPageType'
+          $ref: '#/components/schemas/EnumModifyPageType'
     
     RestorePage:
       type: object
@@ -863,6 +1288,248 @@ components:
           $ref: '#/components/parameters/clientID'
         page:
           $ref: '#/components/parameters/page'
+          
+    InitilizeRequest:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        licenseFile:
+          $ref: '#/components/parameters/licenseFile'
+    
+    FormProcessingTemplateResponse:
+      type: object
+      properties:
+        templateName:
+          $ref: '#/components/parameters/templateName'
+        regionsPages:
+          $ref: '#/components/schemas/RegionsPages'
+    
+    BarcodeTemplateResponse:
+      type: object
+      properties:
+        templateName:
+          $ref: '#/components/parameters/templateName'
+        location:
+          $ref: '#/components/schemas/Location'
+          
+    BaseRegionTemplateRequest:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        templateName:
+          $ref: '#/components/parameters/templateName'
+          
+    RegionTemplateRequest:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BaseRegionTemplateRequest'
+      - type: object
+        properties:
+          isEditting:
+            $ref: '#/components/parameters/isEditting'
+    
+    SaveBarcodeTemplateRequest:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/RegionTemplateRequest'
+      - type: object
+        properties:
+          barcodeLocation:
+            $ref: '#/components/schemas/Location'
+            
+    SaveFormProcessingTemplateRequest:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/RegionTemplateRequest'
+      - type: object
+        properties:
+          regionsPages:
+            $ref: '#/components/schemas/RegionsPages'
+            
+    BarcodeCheckingProgress:
+      type: object
+      properties:
+        completed:
+          type: boolean
+          description: whether the OCR process has been completed
+          example: true
+        errorMessage:
+          type: string
+          description: error message when processing OCR
+          example: ""
+        barcodePages:
+          type: array
+          items:
+            type: integer
+          description: pages that contain barcode(s).
+          example: [1,2,3]
+          
+    RecognizeBarcodeRequest:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        templateId:
+          $ref: '#/components/parameters/templateId'
+        barcodeLocation:
+          $ref: '#/components/schemas/BarcodeLocation'
+    
+    BarcodeRecognizingProgress:
+      type: object
+      properties:
+        completed:
+          type: boolean
+          description: whether the OCR process has been completed
+          example: true
+        errorMessage:
+          type: string
+          description: error message when processing OCR
+          example: ""
+        barcodeDatas:
+          type: array
+          items:
+            $ref: '#/components/schemas/BarcodeData'
+        emptyBarcodePages:
+          type: array
+          items:
+            type: integer
+          description: pages that didn't contain any barcode.
+          example: [4,5,6]
+          
+    ApplyBarcodeSelectionRequest:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        barcodeSelections:
+          type: array
+          items:
+            $ref: '#/components/schemas/BarcodeSelection'
+    
+    UserProvidedBarcodeRequest:
+      type: object
+      properties:
+        clientID:
+          $ref: '#/components/parameters/clientID'
+        isFirstPageEmpty:
+          type: boolean
+          description: indicate that this provided barcode is for the first page without barcode
+          example: false
+          default: false
+        providedBarcodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProvidedBarcode'
+            
+    BarcodeSelection:
+      type: object
+      properties:
+        pageIndex:
+          $ref: '#/components/parameters/pageIndex'
+        selectedBarcode:
+          type: string
+          description: selected barcode from multiple barcodes on a page
+          example: "IN123456789"
+          
+    ProvidedBarcode:
+      type: object
+      properties:
+        pageIndex:
+          $ref: '#/components/parameters/pageIndex'
+        barcode:
+          type: string
+          description: user provided barcode for the page
+          example: "IN123456789"
+          
+    RegionsPages:
+      type: array
+      items:
+        $ref: '#/components/schemas/RegionsPage'
+    
+    BarcodeData:
+      type: object
+      properties:
+        startPage:
+          type: integer
+          description: start page that contains barcode(s)
+          example: 1
+        endPage:
+          type: integer
+          description: end page that contains barcode(s)
+          example: 1
+        selectedBarcode:
+          type: string
+          description: selected barcode from recoginized barcode(s)
+          example: IN123456789
+        barcodes:
+          type: array
+          description: list of recoginized barcode(s) on a page
+          items:
+            type: string
+          example: [IN123456789]
+        barcodeLocations:
+          type: array
+          description: list of recoginized barcode(s) and location of them on a page
+          items:
+            $ref: '#/components/schemas/BarcodeProcessingModel'
+    
+    BarcodeProcessingModel:
+      type: object
+      properties:
+        barcode:
+          type: string
+          description: recognized barcode
+          example: IN123456789
+        location:
+          type: array
+          description: location recognized barcode
+          items:
+            $ref: '#/components/schemas/Location'
+          
+    RegionsPage:
+      type: object
+      properties:
+        pageNumber:
+          $ref: '#/components/parameters/pageNumber'
+        regions:
+          $ref: '#/components/schemas/Region'
+    
+    Region:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Location'
+      - type: object
+        properties:
+          name:
+            type: string
+            description: Name of the region, typically the name of the field to extract data from
+            example: InvoiceNumber
+          text:
+            type: string
+            description: Extracted data from the region
+            example: ""
+    
+    Location:
+      type: object
+      properties:
+        height:
+          type: number
+          description: height of the region
+          example: 300
+        width:
+          type: number
+          description: width of the region
+          example: 400
+        locationX:
+          type: number
+          description: x-coordinate of the region
+          example: 839.88
+        locationY:
+          type: number
+          description: y-coordinate of the region
+          example: 1839.88
 
     KeyValuePairs:
       type: object
