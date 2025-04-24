@@ -617,6 +617,38 @@ components:
         image:
           type: string
           description: base64 encoded string
+          
+    ImageDataResponse:
+      type: object
+      properties:
+        clientID:
+          type: integer
+          description: unique identifier for the session
+          example: 1619662600769
+        page:
+          description: the current page index
+          type: integer
+          example: 3
+        image:
+          type: string
+          description: base64 encoded string
+        horizontalDPI:
+          description: the page's horizontal DPI/Resolution
+          type: number
+          example: 600
+        verticalDPI:
+          description: the page's vertical DPI/Resolution
+          type: number
+          example: 600
+        originalWidth:
+          description: the page's original Width
+          type: number
+          example: 720
+        originalHeight:
+          description: the page's original Height
+          type: number
+          example: 1280
+          
     Source:
       type: object
       properties:
