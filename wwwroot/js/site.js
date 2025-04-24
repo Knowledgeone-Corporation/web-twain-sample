@@ -1,4 +1,6 @@
-$(document).ready(function () {
+var initialScannerSettings = null;
+
+$(function () {
     InitialiseInterfaceOption();
 
     $("#interface-option-dropdown").change(function (x) {
@@ -24,6 +26,10 @@ $(document).ready(function () {
             interfacePath: "", // This is optional if your application lives under a subdomain.
             scannerInterface: selected,
             scanButton: $("#scanbtn"), // the scan button,
+            barcodeRecognitionOption: {
+                barcodeFormats: [], // Supported value: K1WebTwain.Options.BarcodeFormat | Default: Empty (If empty, recognize all barcode formats)
+                barcodeOrientations: [],  //  Supported value: K1WebTwain.Options.BarcodeOrientation | Default: Empty (If empty, recognize barcode in all orientations)
+            }, // options to config barcode recognitions
         };
 
         ShowWait("Preparing...", false);
@@ -38,9 +44,7 @@ $(document).ready(function () {
 
                 K1WebTwain.ResetService().then(function () {
                     $("#k1interface-intialization").removeClass("hide");
-                    //setTimeout(() => {
                     HideWait();
-                    //}, 4000)
                 });
 
             }).catch(function (err) {
@@ -102,9 +106,7 @@ function RenderDesktopSelection() {
                     .text(devices[i].name));
             }
 
-            $("#sel-scanner").unbind();
-            $("#sel-scanner").change(DesktopScannerSelect);
-            //DesktopScannerSelect();
+            $("#sel-scanner").unbind().change(DesktopScannerSelect);
             SetDefaultScanSetting();
 
             $("#device-group").show();
@@ -130,8 +132,7 @@ function RenderSelection() {
 }
 
 function BindAcquire() {
-    $("#btn-acquire").unbind();
-    $("#btn-acquire").click(function (event) {
+    $("#btn-acquire").unbind().click(function (event) {
         $("#errorMessageDiv").hide();
 
         K1WebTwain.StartScan({
@@ -149,25 +150,6 @@ function BindAcquire() {
                     $("#errorMessageDiv").show();
                     InitialiseInterfaceOption();
                 } else {
-                    if (response.pageCount > 1) {
-                        $(".filetype-restriction").show();
-                        var fileType = $("#sel-output").val();
-                        if (fileType == "JPG" || fileType == "GIF" || fileType == "PNG" || fileType == "BMP"){
-                            $("#sel-output").val("TIF");
-                        }
-
-                        $("#sel-output > option").each(function () {
-                            if (this.value == "JPG" || this.value == "GIF" || this.value == "PNG" || this.value == "BMP") {
-                                $(this).hide();
-                            }
-                        });
-                    } else {
-                        $(".filetype-restriction").hide();
-                        $("#sel-output > option").each(function () {
-                            $(this).show();
-                        });
-                    }
-
                     $("#btn-acquire").attr('disabled', 'disabled');
                     $(".finalize-section").removeClass("section-disabled");
                     $(".scanning-section").addClass("section-disabled");
@@ -197,8 +179,7 @@ function BindAcquire() {
     });
 
 
-    $("#btn-attach").unbind();
-    $("#btn-attach").click(function (event) {
+    $("#btn-attach").unbind().click(function (event) {
         K1WebTwain.ValidatePageSize({
             ocrType: $("#sel-ocr-type").val(),
             fileType: $("#sel-output").val(),
@@ -209,8 +190,7 @@ function BindAcquire() {
         });
     });
 
-    $("#btn-save-locally").unbind();
-    $("#btn-save-locally").click(function (event) {
+    $("#btn-save-locally").unbind().click(function (event) {
         K1WebTwain.ValidatePageSize({
             ocrType: $("#sel-ocr-type").val(),
             fileType: $("#sel-output").val(),
@@ -221,8 +201,7 @@ function BindAcquire() {
         });
     });
 
-    $("#btn-cancel-finalization").unbind();
-    $("#btn-cancel-finalization").click(function (event) {
+    $("#btn-cancel-finalization").unbind().click(function (event) {
         this.blur();
         K1WebTwain.ClearAllScannedPages()
             .then(function () {
@@ -304,9 +283,7 @@ function BindScannerSelection(devices) {
             .text(devices[i].name));
     }
 
-    $("#sel-scanner").unbind();
-    $("#sel-scanner").change(ScannerSelect);
-    //ScannerSelect();
+    $("#sel-scanner").unbind().change(ScannerSelect);
 }
 
 function DesktopScannerSelect() {
@@ -363,6 +340,8 @@ function ScannerSelect() {
 
             $("#btn-acquire").removeAttr('disabled')
             BindDocumentSource(device.documentSourceIds)
+
+            SetDefaultSelectSetting($("#sel-document-source"), initialScannerSettings?.ScannerDetails?.DocumentSource);
         })
         .catch(function (ex) {
             console.error(ex);
@@ -427,7 +406,29 @@ function DocumentSourceSelect() {
     populate_feature($("#sel-dpi"), fUnit.resolutionIds);
     populate_feature($("#sel-page-size"), fUnit.pageSizeIds);
     populate_feature($("#sel-duplex"), fUnit.duplexIds);
+
+    $(".sel-scanner-settings").unbind().change(SaveDefaultScanSettings);
+    $(".sel-scanner-settings").change()
+
+    if (initialScannerSettings?.ScannerDetails) {
+        const scannerDetails = initialScannerSettings.ScannerDetails;
+        SetDefaultSelectSetting($("#sel-dpi"), scannerDetails.Resolution);
+        SetDefaultSelectSetting($("#sel-color"), scannerDetails.Color);
+        SetDefaultSelectSetting($("#sel-page-size"), scannerDetails.PageSize);
+        SetDefaultSelectSetting($("#sel-duplex"), scannerDetails.Duplex);
+    }
+
+    SaveDefaultScanSettings();
 }
+
+function SetDefaultSelectSetting(htmlControl, controlValue) {
+    if (controlValue) {
+        if (htmlControl.find("option[value='" + controlValue + "']").length > 0) {
+            htmlControl.val(controlValue).trigger('change');
+        }
+    }
+}
+
 function InitialiseInterfaceOption() {
     var dropdown = $("#interface-option-dropdown");
 
@@ -447,7 +448,6 @@ function InitialiseInterfaceOption() {
 
 function InitialiseDropDown(dropdown) {
     dropdown.empty();
-    //dropdown.append($("<option disabled selected>Please select</option>"));
     dropdown.selectedIndex = 0;
     return dropdown;
 }
@@ -496,13 +496,36 @@ function HideWait() {
     $('.k1ss-wait-div').hide();
 }
 
-function SaveDefaultScanSettings(isUseOcr = false) {
-    var strSettings = JSON.stringify({
-        ScanType: $("#sel-output").val(),
-        UseOCR: isUseOcr,
-        OCRType: $("#sel-ocr-type").val(),
-        ScanSource: $("#sel-scanner").val()
-    });
+function SaveDefaultScanSettings() {
+    var scanSettings = GetDefaultScanSettings();
+    var defaultScannerDetails = scanSettings?.ScannerDetails;
+
+    var scannerDetails = {
+        ScanSource: $("#sel-scanner").val() ?? defaultScannerDetails?.ScanSource,
+        DocumentSource: $("#sel-document-source").val() ?? defaultScannerDetails?.DocumentSource,
+        Resolution: $("#sel-dpi").val() ?? defaultScannerDetails?.Resolution,
+        Color: $("#sel-color").val() ?? defaultScannerDetails?.Color,
+        PageSize: $("#sel-page-size").val() ?? defaultScannerDetails?.PageSize,
+        Duplex: $("#sel-duplex").val() ?? defaultScannerDetails?.Duplex
+    };
+
+    var outputType = $("#sel-output").val();
+    var ocrType = $("#sel-ocr-type").val();
+    var isUseOcr = IsPDF(outputType) && ocrType != K1WebTwain.Options.OcrType.None;
+
+    if (scanSettings) {
+        scanSettings.ScanType = outputType;
+        scanSettings.UseOCR = isUseOcr;
+        scanSettings.OCRType = ocrType;
+        scanSettings.ScannerDetails = scannerDetails
+    } else {
+        scanSettings = {
+            ScanType: outputType,
+            UseOCR: isUseOcr,
+            OCRType: ocrType,
+            ScannerDetails: scannerDetails
+        }
+    }
 
     var set_cookies = function (name, value, days) {
         var expires = "";
@@ -514,7 +537,7 @@ function SaveDefaultScanSettings(isUseOcr = false) {
         document.cookie = name + "=" + (value || "") + expires + "; path=/";
     };
 
-    set_cookies("DefaultScanSettings", strSettings, 365);
+    set_cookies("DefaultScanSettings", JSON.stringify(scanSettings), 365);
 }
 
 function GetDefaultScanSettings() {
@@ -542,8 +565,8 @@ function GetDefaultScanSettings() {
 }
 
 function SetDefaultScanSetting() {
-    var scanSettings = GetDefaultScanSettings();
-    $("#sel-scanner").val(scanSettings ? scanSettings.ScanSource : "-1").trigger('change');
+    initialScannerSettings = GetDefaultScanSettings();
+    $("#sel-scanner").val(initialScannerSettings?.ScannerDetails ? initialScannerSettings.ScannerDetails.ScanSource : "-1").trigger('change');
     var populate_dropdown = function ($dropdown, dict) {
         InitialiseDropDown($dropdown);
         for (var prop in dict) {
@@ -556,7 +579,7 @@ function SetDefaultScanSetting() {
     populate_dropdown($("#sel-ocr-type"), K1WebTwain.Options.OcrType);
     populate_dropdown($("#sel-output"), K1WebTwain.Options.OutputFiletype);
 
-    $("#sel-output").change(function () {
+    $("#sel-output").unbind().change(function () {
         var outputType = $(this).val();
         if (IsPDF(outputType)) {
             $(".pdf-section").show();
@@ -567,21 +590,15 @@ function SetDefaultScanSetting() {
         SaveDefaultScanSettings();
     })
 
-    $("#sel-ocr-type").change(function () {
-        var outputType = $("#sel-output").val();
-        var ocrType = $(this).val();
-        var isUseOcr = IsPDF(outputType) && ocrType != K1WebTwain.Options.OcrType.None;
-        SaveDefaultScanSettings(isUseOcr);
-    })
-    //populate_dropdown($("#sel-save-to"), K1WebTwain.Options.SaveToType);
+    $("#sel-ocr-type").unbind().change(SaveDefaultScanSettings)
 
-    if (scanSettings) {
-        if (scanSettings.ScanType) {
-            $("#sel-output").val(scanSettings.ScanType).trigger('change');
+    if (initialScannerSettings) {
+        if (initialScannerSettings.ScanType) {
+            $("#sel-output").val(initialScannerSettings.ScanType).trigger('change');
         }
 
-        if (scanSettings.OCRType) {
-            $("#sel-ocr-type").val(scanSettings.UseOCR ? scanSettings.OCRType : K1WebTwain.Options.OcrType.None).trigger('change');
+        if (initialScannerSettings.OCRType) {
+            $("#sel-ocr-type").val(initialScannerSettings.UseOCR ? initialScannerSettings.OCRType : K1WebTwain.Options.OcrType.None).trigger('change');
         }
     }
 }
