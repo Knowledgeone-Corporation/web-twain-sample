@@ -1,3 +1,5 @@
+var initialScannerSettings = null;
+
 $(function () {
     InitialiseInterfaceOption();
 
@@ -24,6 +26,10 @@ $(function () {
             interfacePath: "", // This is optional if your application lives under a subdomain.
             scannerInterface: selected,
             scanButton: $("#scanbtn"), // the scan button,
+            barcodeRecognitionOption: {
+                barcodeFormats: [], // Supported value: K1WebTwain.Options.BarcodeFormat | Default: Empty (If empty, recognize all barcode formats)
+                barcodeOrientations: [],  //  Supported value: K1WebTwain.Options.BarcodeOrientation | Default: Empty (If empty, recognize barcode in all orientations)
+            }, // options to config barcode recognitions
         };
 
         ShowWait("Preparing...", false);
@@ -102,6 +108,7 @@ function RenderDesktopSelection() {
 
             $("#sel-scanner").unbind().change(DesktopScannerSelect);
             SetDefaultScanSetting();
+
             $("#device-group").show();
             BindAcquire();
         })
@@ -333,6 +340,8 @@ function ScannerSelect() {
 
             $("#btn-acquire").removeAttr('disabled')
             BindDocumentSource(device.documentSourceIds)
+
+            SetDefaultSelectSetting($("#sel-document-source"), initialScannerSettings?.ScannerDetails?.DocumentSource);
         })
         .catch(function (ex) {
             console.error(ex);
@@ -397,7 +406,29 @@ function DocumentSourceSelect() {
     populate_feature($("#sel-dpi"), fUnit.resolutionIds);
     populate_feature($("#sel-page-size"), fUnit.pageSizeIds);
     populate_feature($("#sel-duplex"), fUnit.duplexIds);
+
+    $(".sel-scanner-settings").unbind().change(SaveDefaultScanSettings);
+    $(".sel-scanner-settings").change()
+
+    if (initialScannerSettings?.ScannerDetails) {
+        const scannerDetails = initialScannerSettings.ScannerDetails;
+        SetDefaultSelectSetting($("#sel-dpi"), scannerDetails.Resolution);
+        SetDefaultSelectSetting($("#sel-color"), scannerDetails.Color);
+        SetDefaultSelectSetting($("#sel-page-size"), scannerDetails.PageSize);
+        SetDefaultSelectSetting($("#sel-duplex"), scannerDetails.Duplex);
+    }
+
+    SaveDefaultScanSettings();
 }
+
+function SetDefaultSelectSetting(htmlControl, controlValue) {
+    if (controlValue) {
+        if (htmlControl.find("option[value='" + controlValue + "']").length > 0) {
+            htmlControl.val(controlValue).trigger('change');
+        }
+    }
+}
+
 function InitialiseInterfaceOption() {
     var dropdown = $("#interface-option-dropdown");
 
@@ -465,19 +496,34 @@ function HideWait() {
     $('.k1ss-wait-div').hide();
 }
 
-function SaveDefaultScanSettings(isUseOcr = false) {
+function SaveDefaultScanSettings() {
     var scanSettings = GetDefaultScanSettings();
+    var defaultScannerDetails = scanSettings?.ScannerDetails;
+
+    var scannerDetails = {
+        ScanSource: $("#sel-scanner").val() ?? defaultScannerDetails?.ScanSource,
+        DocumentSource: $("#sel-document-source").val() ?? defaultScannerDetails?.DocumentSource,
+        Resolution: $("#sel-dpi").val() ?? defaultScannerDetails?.Resolution,
+        Color: $("#sel-color").val() ?? defaultScannerDetails?.Color,
+        PageSize: $("#sel-page-size").val() ?? defaultScannerDetails?.PageSize,
+        Duplex: $("#sel-duplex").val() ?? defaultScannerDetails?.Duplex
+    };
+
+    var outputType = $("#sel-output").val();
+    var ocrType = $("#sel-ocr-type").val();
+    var isUseOcr = IsPDF(outputType) && ocrType != K1WebTwain.Options.OcrType.None;
+
     if (scanSettings) {
-        scanSettings.ScanType = $("#sel-output").val();
+        scanSettings.ScanType = outputType;
         scanSettings.UseOCR = isUseOcr;
-        scanSettings.OCRType = $("#sel-ocr-type").val();
-        scanSettings.ScanSource = $("#sel-scanner").val();
+        scanSettings.OCRType = ocrType;
+        scanSettings.ScannerDetails = scannerDetails
     } else {
         scanSettings = {
-            ScanType: $("#sel-output").val(),
+            ScanType: outputType,
             UseOCR: isUseOcr,
-            OCRType: $("#sel-ocr-type").val(),
-            ScanSource: $("#sel-scanner").val()
+            OCRType: ocrType,
+            ScannerDetails: scannerDetails
         }
     }
 
@@ -519,8 +565,8 @@ function GetDefaultScanSettings() {
 }
 
 function SetDefaultScanSetting() {
-    var scanSettings = GetDefaultScanSettings();
-    $("#sel-scanner").val(scanSettings ? scanSettings.ScanSource : "-1").trigger('change');
+    initialScannerSettings = GetDefaultScanSettings();
+    $("#sel-scanner").val(initialScannerSettings?.ScannerDetails ? initialScannerSettings.ScannerDetails.ScanSource : "-1").trigger('change');
     var populate_dropdown = function ($dropdown, dict) {
         InitialiseDropDown($dropdown);
         for (var prop in dict) {
@@ -544,21 +590,15 @@ function SetDefaultScanSetting() {
         SaveDefaultScanSettings();
     })
 
-    $("#sel-ocr-type").unbind().change(function () {
-        var outputType = $("#sel-output").val();
-        var ocrType = $(this).val();
-        var isUseOcr = IsPDF(outputType) &&
-            ocrType != K1WebTwain.Options.OcrType.None;
-        SaveDefaultScanSettings(isUseOcr);
-    })
+    $("#sel-ocr-type").unbind().change(SaveDefaultScanSettings)
 
-    if (scanSettings) {
-        if (scanSettings.ScanType) {
-            $("#sel-output").val(scanSettings.ScanType).trigger('change');
+    if (initialScannerSettings) {
+        if (initialScannerSettings.ScanType) {
+            $("#sel-output").val(initialScannerSettings.ScanType).trigger('change');
         }
 
-        if (scanSettings.OCRType) {
-            $("#sel-ocr-type").val(scanSettings.UseOCR ? scanSettings.OCRType : K1WebTwain.Options.OcrType.None).trigger('change');
+        if (initialScannerSettings.OCRType) {
+            $("#sel-ocr-type").val(initialScannerSettings.UseOCR ? initialScannerSettings.OCRType : K1WebTwain.Options.OcrType.None).trigger('change');
         }
     }
 }

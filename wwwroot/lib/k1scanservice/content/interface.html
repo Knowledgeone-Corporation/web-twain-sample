@@ -4,73 +4,78 @@
     <div class="k1ss-modal-dialog" style="display:none">
         <div class="k1ss-modal-body">
             <div class="k1ss-left-col">
-                <div class="k1ss-group">
-                    <label>Scanner</label>
-                    <select class="k1ss-selectsource k1ss-control">
-                        <option value="" disabled="" selected="">Please select..</option>
-                    </select>
+                <div class="k1ss-scanning-section">
+                    <div class="k1ss-scanner-detail">
+                        <div class="k1ss-group">
+                            <label>Scanner</label>
+                            <select class="k1ss-selectsource k1ss-control">
+                                <option value="" disabled="" selected="">Please select..</option>
+                            </select>
+                        </div>
+
+                        <div class="k1ss-group">
+                            <label>Document Source</label>
+                            <select class="k1ss-selectfeed k1ss-control">
+                                <option value="" disabled="" selected="">Please select..</option>
+                            </select>
+                        </div>
+
+                        <div class="k1ss-group">
+                            <label>Resolution</label>
+                            <select class="k1ss-selectResolution k1ss-scanner-setting k1ss-control">
+                                <option value="" disabled="" selected="">Please select..</option>
+                            </select>
+                        </div>
+
+                        <div class="k1ss-group">
+                            <label>Color</label>
+                            <select class="k1ss-selectColor k1ss-scanner-setting k1ss-control">
+                                <option value="" disabled="" selected="">Please select..</option>
+                            </select>
+                        </div>
+
+                        <div class="k1ss-group">
+                            <label>Page Size</label>
+                            <select class="k1ss-selectPageSize k1ss-scanner-setting k1ss-control">
+                                <option value="" disabled="" selected="">Please select..</option>
+                            </select>
+                        </div>
+
+                        <div class="k1ss-group">
+                            <label>Duplex</label>
+                            <select class="k1ss-selectDuplex k1ss-scanner-setting k1ss-control">
+                                <option value="" disabled="" selected="">Please select..</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="k1ss-group">
+                        <label>Page Placement</label>
+                        <select class="k1ss-pageplacement k1ss-control" style="width:100%">
+                            <option value="0" selected="selected">Add To End</option>
+                            <option value="1">After Current Page</option>
+                            <option value="2">Before Current Page</option>
+                            <option value="3">Replace Current Page</option>
+                        </select>
+                    </div>
+
+                    <div class="k1ss-group">
+                        <label><input class="k1ss-chk-autodeskew k1ss-checkbox" type="checkbox" />Automatically de-skew all scanned pages</label>
+                    </div>
+
+                    <div class="k1ss-group k1ss-center">
+                        <input type="button" value="SCAN" class="k1ss-startscan k1ss-button" />
+                        <input type="button" value="ADD DOCUMENT" class="k1ss-adddocument k1ss-button" />
+                        <input type="file" class="k1ss-add-document-input" style="display:none;" 
+                               accept="image/jpeg,image/gif,image/png,application/pdf,image/bmp,image/tiff,image/tif,.tif"
+                               multiple>
+                    </div>
                 </div>
 
-                <div class="k1ss-group">
-                    <label>Document Source</label>
-                    <select class="k1ss-selectfeed k1ss-control">
-                        <option value="" disabled="" selected="">Please select..</option>
-                    </select>
+                <div class="k1ss-lm-sep k1ss-finalize-separator">
                 </div>
 
-                <div class="k1ss-group">
-                    <label>Resolution</label>
-                    <select class="k1ss-selectResolution k1ss-control">
-                        <option value="" disabled="" selected="">Please select..</option>
-                    </select>
-                </div>
-
-                <div class="k1ss-group">
-                    <label>Color</label>
-                    <select class="k1ss-selectColor k1ss-control">
-                        <option value="" disabled="" selected="">Please select..</option>
-                    </select>
-                </div>
-
-                <div class="k1ss-group">
-                    <label>Page Size</label>
-                    <select class="k1ss-selectPageSize k1ss-control">
-                        <option value="" disabled="" selected="">Please select..</option>
-                    </select>
-                </div>
-
-                <div class="k1ss-group">
-                    <label>Duplex</label>
-                    <select class="k1ss-selectDuplex k1ss-control">
-                        <option value="" disabled="" selected="">Please select..</option>
-                    </select>
-                </div>
-
-                <div class="k1ss-group">
-                    <label>Page Placement</label>
-                    <select class="k1ss-pageplacement k1ss-control" style="width:100%">
-                        <option value="0" selected="selected">Add To End</option>
-                        <option value="1">After Current Page</option>
-                        <option value="2">Before Current Page</option>
-                        <option value="3">Replace Current Page</option>
-                    </select>
-                </div>
-
-                <div class="k1ss-group">
-                    <label><input class="k1ss-chk-autodeskew k1ss-checkbox" type="checkbox"/>Automatically de-skew all scanned pages</label>
-                </div>
-
-                <div class="k1ss-group k1ss-center">
-                    <input type="button" value="SCAN" class="k1ss-startscan k1ss-button" />
-                    <input type="button" value="ADD DOCUMENT" class="k1ss-adddocument k1ss-button" />
-                    <input type="file" class="k1ss-add-document-input" style="display:none;" accept="image/jpeg,image/gif,image/png,application/pdf,image/bmp,image/tiff,image/tif,.tif">
-                </div>
-
-                <div class="k1ss-lm-sep">
-                </div>
-
-                <div class="k1ss-group k1ss-center" style="margin-bottom: 5px;">
-                    <input type="button" value="FINALIZE" class="k1ss-finalize k1ss-button k1ss-disabled" />
+                <div class="k1ss-group k1ss-center" style="margin-bottom: 15px; margin-top: 15px">
+                    <input type="button" value="FINALIZE" class="k1ss-finalize k1ss-button" />
                 </div>
 
                 <div class="k1ss-finalize-section k1ss-section-disabled">
@@ -116,10 +121,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="k1ss-group k1ss-center">
-                    <input type="button" value="ATTACH DOCUMENT" class="k1ss-attach k1ss-button k1ss-disabled" />
-                    <input type="button" value="SAVE LOCALLY" class="k1ss-save-locally k1ss-button k1ss-disabled" />
+
+                    <div class="k1ss-group k1ss-center">
+                        <input type="button" value="ATTACH DOCUMENT" class="k1ss-attach k1ss-button k1ss-disabled" />
+                        <input type="button" value="SAVE LOCALLY" class="k1ss-save-locally k1ss-button k1ss-disabled" />
+                    </div>
                 </div>
                 <div class="k1ss-license"></div>
             </div>
@@ -328,11 +334,24 @@
         </div>
     </div>
 
+    <div class="k1ss-finalizing-div k1ss-confirm-div" style="display:none">
+        <div class="k1ss-dialog-body">
+            <!--<h3 class="k1ss-finalizingtitle" style="margin-top: 0;">Finalize Document</h3>-->
+            <div class="k1ss-form-group">
+                <p style="font-size: 18px;">Please confirm to Finalize document</p>
+            </div>
+            <div class="k1ss-form-group confirm-buttons">
+                <button class="k1ss-okfinalize k1ss-button k1ss-okconfimbutton">OK</button>
+                <button class="k1ss-closefinalize k1ss-button k1ss-cancelconfimbutton">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div class="k1ss-ocrtimeout-div k1ss-confirm-div" style="display:none">
         <div class="k1ss-dialog-body">
-            <h3 class="k1ss-deletetitle" style="margin-top: 0;">Cancel OCR Processing</h3>
+            <h3 class="k1ss-cancelocrtitle" style="margin-top: 0;">Cancel OCR Processing</h3>
             <div class="k1ss-form-group">
-                <p>Would you like to cancel OCR processing?</p>
+                <p class="k1ss-cancelocr-description">Would you like to cancel OCR processing?</p>
             </div>
             <div class="k1ss-form-group confirm-buttons">
                 <button class="k1ss-okecancelocr k1ss-button k1ss-okconfimbutton">Yes</button>
@@ -373,8 +392,8 @@
                 <ul class="k1ss-barcode-template-list"></ul>
             </div>
             <div class="k1ss-form-group k1ss-barcode-location">
-                <label><input class="k1ss-rad-barcode-coversheet" type="radio" name="k1ss_barcodelocation" value="0" tabindex="0"/> Barcode on cover sheet</label>
-                <label><input class="k1ss-rad-barcode-ondocument" type="radio" name="k1ss_barcodelocation" value="1" tabindex="0"/> Barcode on document</label>
+                <label><input class="k1ss-rad-barcode-coversheet" type="radio" name="k1ss_barcodelocation" value="0" tabindex="0" /> Barcode on cover sheet</label>
+                <label><input class="k1ss-rad-barcode-ondocument" type="radio" name="k1ss_barcodelocation" value="1" tabindex="0" /> Barcode on document</label>
             </div>
             <div class="k1ss-form-group confirm-buttons">
                 <button class="k1ss-auto-recognize k1ss-button k1ss-okconfimbutton" style="width: 123px">Auto Recognize</button>
@@ -423,16 +442,16 @@
                         <label>No barcode found on this page, please input the value:</label>
                         <input type="text" class="k1ss-barcode-missing-input" style="width: 288px">
                     </div>
-                    <a class="k1ss-start-drawing k1ss-btn k1ss-disabled" title="Start Drawing"></a>
-                    <a class="k1ss-edit-region k1ss-btn k1ss-disabled" title="Edit Region"></a>
+                    <a class="k1ss-start-drawing k1ss-designer-btn" title="Start Drawing"></a>
+                    <a class="k1ss-edit-region k1ss-designer-btn" title="Edit Region"></a>
                     <!--<a class="k1ss-clone-region k1ss-btn k1ss-disabled" title="Clone Region"></a>
                     <div class="k1ss-tbar-sep"></div>
                     <a class="k1ss-zoom-region-in k1ss-btn k1ss-disabled" title="Zoom In"></a>
                     <a class="k1ss-zoom-region-out k1ss-btn k1ss-disabled" title="Zoom Out"></a>
                     <a class="k1ss-zoom-region-reset k1ss-btn k1ss-disabled" title="Zoom Reset"></a>-->
                     <div class="k1ss-tbar-sep"></div>
-                    <a class="k1ss-delete-region k1ss-btn k1ss-disabled" title="Delete Region"></a>
-                    <a class="k1ss-delete-all-regions k1ss-btn k1ss-disabled" title="Delete All Regions(s)"></a>
+                    <a class="k1ss-delete-region k1ss-designer-btn" title="Delete Region"></a>
+                    <a class="k1ss-delete-all-regions k1ss-designer-btn" title="Delete All Regions(s)"></a>
                 </div>
 
                 <div class="k1ss-region-document">
@@ -444,11 +463,11 @@
                 </div>
 
                 <div class="k1ss-btmBar">
-                    <a class="k1ss-region-page k1ss-region-pagefirst k1ss-btn k1ss-disabled" title="First Page"></a>
-                    <a class="k1ss-region-page k1ss-region-pageprev k1ss-btn k1ss-disabled" title="Previous Page"></a>
+                    <a class="k1ss-region-page k1ss-region-pagefirst k1ss-designer-btn k1ss-disabled" title="First Page"></a>
+                    <a class="k1ss-region-page k1ss-region-pageprev k1ss-designer-btn k1ss-disabled" title="Previous Page"></a>
                     <span class="k1ss-region-page-info">Page <span class="k1ss-region-currentpage">0</span> of <span class="k1ss-region-numpages">0</span></span>
-                    <a class="k1ss-region-page k1ss-region-pagenext k1ss-btn k1ss-disabled" title="Next Page"></a>
-                    <a class="k1ss-region-page k1ss-region-pagelast k1ss-btn k1ss-disabled" title="Last Page"></a>
+                    <a class="k1ss-region-page k1ss-region-pagenext k1ss-designer-btn k1ss-disabled" title="Next Page"></a>
+                    <a class="k1ss-region-page k1ss-region-pagelast k1ss-designer-btn k1ss-disabled" title="Last Page"></a>
                     <button class="k1ss-save-template k1ss-button k1ss-okconfimbutton">Save</button>
                 </div>
             </div>
