@@ -982,6 +982,14 @@ components:
           description: the page's vertical DPI/Resolution
           type: number
           example: 600
+        originalWidth:
+          description: the page's original Width
+          type: number
+          example: 720
+        originalHeight:
+          description: the page's original Height
+          type: number
+          example: 1280
           
     Source:
       type: object
