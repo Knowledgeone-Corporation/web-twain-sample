@@ -1,5 +1,22 @@
 ## Knowledgeone WebTWAIN Release Notes
 
+## Version 3.0.0
+- Introduces stability fixes and performance enhancements for both Windows and MacOS.
+- Logging now provides more detailed and actionable information for troubleshooting across Windows and MacOS.
+- UI/UX improvements for modifications and long-running operations.
+- Added validations and implemented security improvements.
+- **Barcode Recognition**: Supports recognition of modern barcode types on documents.
+  - Barcodes can be on cover sheets or embedded in documents.   
+  - The barcode recognition can automatically locate a barcode where the location is not fixed, or barcode locations can be defined using templates.
+- **Form Processing**: Extracts data from documents based on designed templates.
+  - Templates can be created or modified at time of scanning and stored for reuse.
+- **Template Designer**: Added for Barcode Recognition and Form Processing features.
+  - Templates can be created for identifying forms data extraction and for barcode location definition.
+- Enables adding or importing document types such as PDF, PDF/A, TIFF, TIF, JPG, JPEG, PNG, BMP, and GIF, treating them as scanned documents.
+- Support for manual and automatic de-skewing to align skewed documents.  Deskewing can be done automatically when scanning; also manually after scanning for all pages or selected pages.
+- Option to return a compressed ZIP file containing multiple images in formats such as PNG, JPEG, BMP, and GIF. This allows for multi-page documents using formats that do not natively support multiple pages.
+- Prefilling of previously selected scanning parameters carried over from previous scan operation.
+
 ### Version 2.3.3
 - This release introduces stability fixes for both Windows and MacOS.
 - Enhanced issue troubleshooting with more concise logging messages and additional tracing information.
