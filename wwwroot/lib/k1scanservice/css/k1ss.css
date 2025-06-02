@@ -558,7 +558,6 @@ button.k1ss-ok-formprocessing.k1ss-button.k1ss-okconfimbutton.k1ss-disabled,
 .k1ss-barcode-template-popup,
 .k1ss-template-design-popup,
 .k1ss-input-popup,
-.k1ss-finalizing-div,
 .k1ss-resize-div {
     position: fixed;
     top: 66px;
@@ -589,7 +588,6 @@ k1ss-ocrtimeout-div,
     .k1ss-input-popup .k1ss-dialog-body,
     .k1ss-template-design-popup .k1ss-dialog-body,
     .k1ss-delete-template-popup .k1ss-dialog-body,
-    .k1ss-finalizing-div .k1ss-dialog-body,
     .k1ss-resize-div .k1ss-dialog-body {
         width: 266px;
         padding: 20px;
