@@ -183,6 +183,7 @@ function BindAcquire() {
         K1WebTwain.ValidatePageSize({
             ocrType: $("#sel-ocr-type").val(),
             fileType: $("#sel-output").val(),
+            fileCompressionType: $("#sel-compression").val(),
             saveToType: K1WebTwain.Options.SaveToType.Upload,
             generateDocument: function () {
                 GenerateDocument(K1WebTwain.Options.SaveToType.Upload)
@@ -194,6 +195,7 @@ function BindAcquire() {
         K1WebTwain.ValidatePageSize({
             ocrType: $("#sel-ocr-type").val(),
             fileType: $("#sel-output").val(),
+            fileCompressionType: $("#sel-compression").val(),
             saveToType: K1WebTwain.Options.SaveToType.Local,
             generateDocument: function () {
                 GenerateDocument(K1WebTwain.Options.SaveToType.Local)
@@ -219,6 +221,7 @@ function GenerateDocument(request) {
 
     K1WebTwain.GenerateDocument({
         filetype: $("#sel-output").val(),
+        fileCompressionType: $("#sel-compression").val(),
         ocrType: $("#sel-ocr-type").val(),
         saveToType: request,
         filename: $("#sel-output-name").val(),
@@ -512,15 +515,18 @@ function SaveDefaultScanSettings() {
     var outputType = $("#sel-output").val();
     var ocrType = $("#sel-ocr-type").val();
     var isUseOcr = IsPDF(outputType) && ocrType != K1WebTwain.Options.OcrType.None;
+    var fileCompressionType = $("#sel-compression").val();
 
     if (scanSettings) {
         scanSettings.ScanType = outputType;
+        scanSettings.FileCompressionType = fileCompressionType;
         scanSettings.UseOCR = isUseOcr;
         scanSettings.OCRType = ocrType;
         scanSettings.ScannerDetails = scannerDetails
     } else {
         scanSettings = {
             ScanType: outputType,
+            FileCompressionType: fileCompressionType,
             UseOCR: isUseOcr,
             OCRType: ocrType,
             ScannerDetails: scannerDetails
@@ -578,6 +584,7 @@ function SetDefaultScanSetting() {
 
     populate_dropdown($("#sel-ocr-type"), K1WebTwain.Options.OcrType);
     populate_dropdown($("#sel-output"), K1WebTwain.Options.OutputFiletype);
+    populate_dropdown($("#sel-compression"), K1WebTwain.Options.FileCompressionType);
 
     $("#sel-output").unbind().change(function () {
         var outputType = $(this).val();
@@ -592,9 +599,15 @@ function SetDefaultScanSetting() {
 
     $("#sel-ocr-type").unbind().change(SaveDefaultScanSettings)
 
+    $("#sel-compression").unbind().change(SaveDefaultScanSettings)
+
     if (initialScannerSettings) {
         if (initialScannerSettings.ScanType) {
             $("#sel-output").val(initialScannerSettings.ScanType).trigger('change');
+        }
+
+        if (initialScannerSettings.FileCompressionType) {
+            $("#sel-compression").val(initialScannerSettings.FileCompressionType).trigger('change');
         }
 
         if (initialScannerSettings.OCRType) {
