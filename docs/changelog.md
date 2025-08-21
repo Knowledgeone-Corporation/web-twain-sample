@@ -1,5 +1,13 @@
 ## Knowledgeone WebTWAIN Release Notes
 
+## Version 3.1.0
+- Introduces support for compressing scanned pages to reduce file size. Users can select from multiple compression levels:  
+  - **None**: Produces the highest quality output with larger file size.  
+  - **Low**: Maintains visually good quality with balanced file size.  
+  - **Medium**: Applies noticeable compression while keeping quality acceptable for many use cases.  
+  - **High**: Applies heavy compression, resulting in smaller file sizes with visible artifacts.  
+- Resolves issues encountered with black and white scanning on certain macOS scanners.  
+
 ## Version 3.0.0
 - Introduces stability fixes and performance enhancements for both Windows and MacOS.
 - Logging now provides more detailed and actionable information for troubleshooting across Windows and MacOS.
