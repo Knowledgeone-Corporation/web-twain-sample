@@ -65,7 +65,7 @@
                     <div class="k1ss-group k1ss-center">
                         <input type="button" value="SCAN" class="k1ss-startscan k1ss-button" />
                         <input type="button" value="ADD DOCUMENT" class="k1ss-adddocument k1ss-button" />
-                        <input type="file" class="k1ss-add-document-input" style="display:none;" 
+                        <input type="file" class="k1ss-add-document-input" style="display:none;"
                                accept="image/jpeg,image/gif,image/png,application/pdf,image/bmp,image/tiff,image/tif,.tif"
                                multiple>
                     </div>
@@ -95,6 +95,16 @@
                             <option class="k1ss-single-ft" value="GIF">GIF</option>
                             <option class="k1ss-single-ft" value="BMP">BMP</option>
                             <option class="k1ss-single-ft" value="PNG">PNG</option>
+                        </select>
+                    </div>
+
+                    <div class="k1ss-group">
+                        <label>File Compression</label>
+                        <select class="k1ss-filecompression k1ss-control" style="width:100%">
+                            <option value="0" selected="selected" title="High quality, larger file size">None</option>
+                            <option value="1" title="Visually good quality, balanced size">Low</option>
+                            <option value="2" title="Noticeable compression, still acceptable in many cases">Medium</option>
+                            <option value="3" title="Heavy compression with visible artifacts">High</option>
                         </select>
                     </div>
 
