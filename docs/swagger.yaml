@@ -296,6 +296,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/clientID'
         - $ref: '#/components/parameters/isPDFA'
+        - $ref: '#/components/parameters/fileCompressionType'
       responses:
         '200':
           description: Validate pdf file size job started successfully
@@ -497,6 +498,15 @@ components:
       schema:
         type: boolean
       example: true
+
+    fileCompressionType:
+      name: fileCompressionType
+      in: query
+      description: Compression type for the output file.
+      required: false
+      schema:
+        $ref: '#/components/schemas/EnumFileCompressionType'
+      example: 0
       
   schemas:
     EnumOCRType:
@@ -521,7 +531,7 @@ components:
         - 1
         - 2
         - 3
-
+    
     FileTypes:
       type: string
       enum:
@@ -552,6 +562,15 @@ components:
       enum:
         - 0
         - 1
+
+    EnumFileCompressionType:
+        description: '0: None - No compression<br/>1: Low - Low compression<br/>2: Medium - Medium compression<br/>3: High - High compression'
+        type: integer
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
 
     FileData:
       type: object
@@ -851,6 +870,10 @@ components:
           type: integer
           description: whether the document will be saved locally or uploaded to ''fileUploadURL' endpoint
           $ref: '#/components/schemas/SaveToType'
+        fileCompressionType:
+          description: Compression type for the output file.
+          type: integer
+          $ref: '#/components/schemas/EnumFileCompressionType'
 
     ResizePageRequest:
       type: object

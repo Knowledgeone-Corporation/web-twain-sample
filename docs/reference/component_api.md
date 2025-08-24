@@ -142,7 +142,8 @@
         filetype: K1WebTwain.Options.OutputFiletype.PDF,
         ocrType: K1WebTwain.Options.OcrType.None,
         filename: test,
-        saveToType: K1WebTwain.Options.SaveToType.Upload
+        saveToType: K1WebTwain.Options.SaveToType.Upload,
+        fileCompressionType: K1WebTwain.Options.FileCompressionType.None
     };
 
     K1WebTwain.Acquire(request)
@@ -219,7 +220,8 @@
         filetype: K1WebTwain.Options.OutputFiletype.PDF,
         ocrType: K1WebTwain.Options.OcrType.None,
         filename: test,
-        saveToType: K1WebTwain.Options.SaveToType.Upload
+        saveToType: K1WebTwain.Options.SaveToType.Upload,
+        fileCompressionType: K1WebTwain.Options.FileCompressionType.None
     };
 
     K1WebTwain.GenerateDocument(request)
@@ -259,7 +261,8 @@
         filetype: K1WebTwain.Options.OutputFiletype.PDF,
         ocrType: K1WebTwain.Options.OcrType.None,
         filename: test,
-        saveToType: K1WebTwain.Options.SaveToType.Upload
+        saveToType: K1WebTwain.Options.SaveToType.Upload,
+        fileCompressionType: K1WebTwain.Options.FileCompressionType.None
     };
 
     K1WebTwain.ValidatePageSize(request);
@@ -320,7 +323,8 @@
     filetype: K1WebTwain.Options.OutputFiletype
     ocrType: K1WebTwain.Options.OcrType
     filename: string,
-    saveToType: K1WebTwain.Options.SaveToType.Upload
+    saveToType: K1WebTwain.Options.SaveToType.Upload,
+    fileCompressionType: K1WebTwain.Options.FileCompressionType.None
 }
 ```
 
@@ -373,4 +377,14 @@ ReplaceCurrentPage - replace the current page in the document
 ```
 Upload - Upload the file.
 Local - Save the file locally.
+```
+
+#### K1WebTwain.Options.FileCompressionType
+**type:** enum  
+**description:** set the compression level for generated files.
+```
+ None - Produces the highest quality output with larger file size.  
+ Low - Maintains visually good quality with balanced file size.  
+ Medium - Applies noticeable compression while keeping quality acceptable for many use cases.  
+ High - Applies heavy compression, resulting in smaller file sizes with visible artifacts.
 ```

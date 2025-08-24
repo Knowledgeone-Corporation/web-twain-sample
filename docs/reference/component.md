@@ -124,7 +124,8 @@ var request = {
     filetype: K1WebTwain.Options.OutputFiletype.PDF,
     ocrType: K1WebTwain.Options.OcrType.None,
     filename: "test",
-    saveToType: K1WebTwain.Options.SaveToType.Upload
+    saveToType: K1WebTwain.Options.SaveToType.Upload,
+    fileCompressionType: K1WebTwain.Options.FileCompressionType.None
 };
 
 K1WebTwain.GenerateDocument(request)
@@ -142,6 +143,7 @@ var request = {
     filetype: K1WebTwain.Options.OutputFiletype.PDF,
     ocrType: K1WebTwain.Options.OcrType.None,
     saveToType: K1WebTwain.Options.SaveToType.Upload,
+    fileCompressionType: K1WebTwain.Options.FileCompressionType.None,
     generateDocument: function () {
         GenerateDocument(K1WebTwain.Options.SaveToType.Upload)
     }
@@ -195,7 +197,8 @@ var request = {
     filetype: K1WebTwain.Options.OutputFiletype.PDF,
     ocrType: K1WebTwain.Options.OcrType.None,
     filename: "test",
-    saveToType: K1WebTwain.Options.SaveToType.Upload
+    saveToType: K1WebTwain.Options.SaveToType.Upload,
+    fileCompressionType: K1WebTwain.Options.FileCompressionType.None
 };
 
 K1WebTwain.GenerateDocument(request)
@@ -213,6 +216,7 @@ var request = {
     filetype: K1WebTwain.Options.OutputFiletype.PDF,
     ocrType: K1WebTwain.Options.OcrType.None,
     saveToType: K1WebTwain.Options.SaveToType.Upload,
+    fileCompressionType: K1WebTwain.Options.FileCompressionType.None,
     generateDocument: function () {
         GenerateDocument(K1WebTwain.Options.SaveToType.Upload)
     }
