@@ -441,6 +441,216 @@ paths:
         '200':
           description: The service is successfully restarted.
 
+  # ---------------------------------------------------------------------------
+  # Barcode Recognition APIs
+  # (Hidden / Desktop modes only — Visible and Web modes use k1ss.js)
+  # ---------------------------------------------------------------------------
+
+  /CheckBarcodePages:
+    get:
+      tags:
+        - Barcode Recognition
+      summary: Start the job to detect pages containing barcodes.
+      description: >-
+        Starts an asynchronous job that scans all acquired pages and identifies
+        which pages contain at least one barcode. <br/>
+        Poll <strong>GetBarcodeCheckingProgress</strong> until
+        <code>completed</code> is <code>true</code> before proceeding to
+        <strong>RecognizeBarcode</strong>.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Barcode page-check job started successfully.
+
+  /GetBarcodeCheckingProgress:
+    get:
+      tags:
+        - Barcode Recognition
+      summary: Poll for barcode page-detection progress and results.
+      description: >-
+        Returns the current status of the barcode page-check job started by
+        <strong>CheckBarcodePages</strong>. <br/>
+        When <code>completed</code> is <code>true</code>, the
+        <code>barcodePages</code> array contains the 1-based page indices that
+        contain at least one barcode.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a BarcodeCheckingProgress object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarcodeCheckingProgress'
+
+  /RecognizeBarcode:
+    post:
+      tags:
+        - Barcode Recognition
+      summary: Start the barcode recognition job.
+      description: >-
+        Starts an asynchronous job that reads and decodes barcodes from the
+        acquired pages. <br/>
+        Poll <strong>GetBarcodeRecognizingProgress</strong> until
+        <code>completed</code> is <code>true</code>. <br/>
+        If a page contains multiple barcodes, call
+        <strong>ApplyBarcodeSelection</strong> to choose which value to use.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecognizeBarcodeRequest'
+      responses:
+        '200':
+          description: Barcode recognition job started successfully.
+
+  /GetBarcodeRecognizingProgress:
+    get:
+      tags:
+        - Barcode Recognition
+      summary: Poll for barcode recognition progress and results.
+      description: >-
+        Returns the current status of the barcode recognition job started by
+        <strong>RecognizeBarcode</strong>. <br/>
+        When <code>completed</code> is <code>true</code>, inspect
+        <code>barcodeDatas</code> for recognised values and
+        <code>emptyBarcodePages</code> for pages with no barcode found.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns a BarcodeRecognizingProgress object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarcodeRecognizingProgress'
+
+  /ApplyBarcodeSelection:
+    post:
+      tags:
+        - Barcode Recognition
+      summary: Apply the selected barcode value for each page.
+      description: >-
+        When a page contains multiple barcodes, this call records which barcode
+        value the service should use for document generation. <br/>
+        Call this after <strong>GetBarcodeRecognizingProgress</strong> returns
+        <code>completed = true</code>, then proceed to
+        <strong>AttachDocument</strong> with
+        <code>isBarcodeProcessing = true</code>.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyBarcodeSelectionRequest'
+      responses:
+        '200':
+          description: Barcode selection applied successfully.
+
+  /ApplyUserProvidedBarcodes:
+    post:
+      tags:
+        - Barcode Recognition
+      summary: Assign manually provided barcode values to pages.
+      description: >-
+        Use this endpoint when automatic recognition is not available or when
+        the user manually enters barcode values. <br/>
+        Returns the processed BarcodeData array after the provided values have
+        been applied.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProvidedBarcodeRequest'
+      responses:
+        '200':
+          description: Returns an array of BarcodeData objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BarcodeData'
+
+  /GetListBarcodeTemplates:
+    get:
+      tags:
+        - Barcode Templates
+      summary: Return the list of saved barcode templates.
+      description: >-
+        Returns the names of all barcode region templates stored on the service.
+        Templates constrain recognition to a specific area of the page,
+        improving speed and accuracy.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+      responses:
+        '200':
+          description: Returns an array of template name strings.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: InvoiceBarcode
+
+  /GetBarcodeTemplate:
+    get:
+      tags:
+        - Barcode Templates
+      summary: Retrieve a barcode template by name.
+      parameters:
+        - $ref: '#/components/parameters/clientID'
+        - in: query
+          name: templateName
+          required: true
+          schema:
+            type: string
+          example: InvoiceBarcode
+      responses:
+        '200':
+          description: Returns a BarcodeTemplateResponse object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarcodeTemplateResponse'
+
+  /SaveBarcodeTemplate:
+    post:
+      tags:
+        - Barcode Templates
+      summary: Save or update a barcode template.
+      description: >-
+        Creates a new barcode region template or updates an existing one
+        (set <code>isEditting</code> to <code>true</code> to update).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveBarcodeTemplateRequest'
+      responses:
+        '200':
+          description: Template saved successfully.
+
+  /DeleteBarcodeTemplate:
+    delete:
+      tags:
+        - Barcode Templates
+      summary: Delete a barcode template.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseRegionTemplateRequest'
+      responses:
+        '200':
+          description: Template deleted successfully.
+
 components:
   parameters:
     clientID:
@@ -930,3 +1140,336 @@ components:
           type: string
           description: Header value
           example: "Test"
+
+    # -------------------------------------------------------------------------
+    # Barcode Recognition Schemas
+    # -------------------------------------------------------------------------
+
+    BarcodeRecognitionOption:
+      type: object
+      description: >-
+        Configures the barcode recognition engine. Passed inside the
+        Initialize request body. An empty array for either field means
+        "use all available options" (auto-detect).
+      properties:
+        barcodeFormats:
+          type: array
+          description: Barcode symbologies to detect. Empty array = all formats.
+          items:
+            $ref: '#/components/schemas/BarcodeFormat'
+          example: [0]
+        barcodeOrientations:
+          type: array
+          description: >-
+            Reading orientations to attempt. Empty array or all four values
+            enables automatic rotation detection.
+          items:
+            $ref: '#/components/schemas/BarcodeOrientation'
+          example: [0, 1, 2, 3]
+
+    InitializeWithBarcodeRequest:
+      type: object
+      description: Request body for POST /Initialize when using barcode recognition.
+      required:
+        - clientID
+      properties:
+        clientID:
+          type: integer
+          description: Unique identifier for the session.
+          example: 1619662600769
+        licenseFile:
+          type: string
+          description: URL that returns the license file.
+          example: "http://localhost:5000/Home/K1Licence"
+        barcodeRecognitionOption:
+          $ref: '#/components/schemas/BarcodeRecognitionOption'
+
+    RecognizeBarcodeRequest:
+      type: object
+      description: Request body for POST /RecognizeBarcode.
+      required:
+        - clientID
+      properties:
+        clientID:
+          type: integer
+          description: Unique identifier for the session.
+          example: 1619662600769
+        BarcodeLocation:
+          $ref: '#/components/schemas/BarcodeLocation'
+        templateId:
+          type: string
+          description: >-
+            Name of a saved barcode template that restricts recognition to a
+            defined region. Leave empty to search the full page.
+          example: ""
+
+    ApplyBarcodeSelectionRequest:
+      type: object
+      description: Request body for POST /ApplyBarcodeSelection.
+      required:
+        - clientID
+        - barcodeSelections
+      properties:
+        clientID:
+          type: integer
+          description: Unique identifier for the session.
+          example: 1619662600769
+        barcodeSelections:
+          type: array
+          description: One entry per page that requires a barcode selection.
+          items:
+            $ref: '#/components/schemas/BarcodeSelection'
+
+    BarcodeSelection:
+      type: object
+      description: Maps a 0-based page index to the chosen barcode value.
+      required:
+        - pageIndex
+      properties:
+        pageIndex:
+          type: integer
+          description: 0-based page index.
+          example: 0
+        selectedBarcode:
+          type: string
+          description: The barcode value to use for this page.
+          example: "INV-2024-001"
+
+    UserProvidedBarcodeRequest:
+      type: object
+      description: Request body for POST /ApplyUserProvidedBarcodes.
+      required:
+        - clientID
+        - providedBarcodes
+      properties:
+        clientID:
+          type: integer
+          description: Unique identifier for the session.
+          example: 1619662600769
+        isFirstPageEmpty:
+          type: boolean
+          description: >-
+            Set to true if the first scanned page is a blank cover/separator
+            sheet.
+          example: false
+        providedBarcodes:
+          type: array
+          description: Barcode value per page index, supplied by the user.
+          items:
+            $ref: '#/components/schemas/ProvidedBarcode'
+
+    ProvidedBarcode:
+      type: object
+      description: Maps a 0-based page index to a manually supplied barcode value.
+      required:
+        - pageIndex
+        - barcode
+      properties:
+        pageIndex:
+          type: integer
+          description: 0-based page index.
+          example: 0
+        barcode:
+          type: string
+          description: The barcode value to assign to this page.
+          example: "INV-2024-001"
+
+    BarcodeCheckingProgress:
+      type: object
+      description: Progress response from GET /GetBarcodeCheckingProgress.
+      properties:
+        completed:
+          type: boolean
+          description: True when the barcode page-detection job has finished.
+          example: true
+        errorMessage:
+          type: string
+          description: Error description; empty string on success.
+          example: ""
+        barcodePages:
+          type: array
+          description: 1-based page indices that contain at least one barcode.
+          items:
+            type: integer
+          example: [1, 3]
+
+    BarcodeRecognizingProgress:
+      type: object
+      description: Progress response from GET /GetBarcodeRecognizingProgress.
+      properties:
+        completed:
+          type: boolean
+          description: True when the recognition job has finished.
+          example: true
+        errorMessage:
+          type: string
+          description: Error description; empty string on success.
+          example: ""
+        barcodeDatas:
+          type: array
+          description: One BarcodeData entry per recognised document group.
+          items:
+            $ref: '#/components/schemas/BarcodeData'
+        emptyBarcodePages:
+          type: array
+          description: 1-based page indices where no barcode was found.
+          items:
+            type: integer
+          example: [2]
+
+    BarcodeData:
+      type: object
+      description: Represents a barcode group spanning one or more pages.
+      properties:
+        startPage:
+          type: integer
+          description: 1-based index of the first page in this document group.
+          example: 1
+        endPage:
+          type: integer
+          description: 1-based index of the last page in this document group.
+          example: 2
+        selectedBarcode:
+          type: string
+          description: The currently selected barcode value for this group.
+          example: "INV-2024-001"
+        barcodes:
+          type: array
+          description: All barcode values detected on the cover/separator page.
+          items:
+            type: string
+          example: ["INV-2024-001", "INV-2024-002"]
+        barcodeLocations:
+          type: array
+          description: Pixel locations of each barcode detected on the page.
+          items:
+            $ref: '#/components/schemas/BarcodeProcessingModel'
+
+    BarcodeProcessingModel:
+      type: object
+      description: A single barcode detection result including its location on the page.
+      properties:
+        location:
+          $ref: '#/components/schemas/Location'
+        barcode:
+          type: string
+          description: The decoded barcode value.
+          example: "INV-2024-001"
+
+    Location:
+      type: object
+      description: Defines a rectangular region on the page in pixels.
+      required:
+        - locationX
+        - locationY
+        - width
+        - height
+      properties:
+        locationX:
+          type: number
+          format: float
+          description: X coordinate of the top-left corner.
+          example: 50.0
+        locationY:
+          type: number
+          format: float
+          description: Y coordinate of the top-left corner.
+          example: 30.0
+        width:
+          type: number
+          format: float
+          description: Width of the region.
+          example: 200.0
+        height:
+          type: number
+          format: float
+          description: Height of the region.
+          example: 60.0
+
+    SaveBarcodeTemplateRequest:
+      type: object
+      description: Request body for POST /SaveBarcodeTemplate.
+      required:
+        - clientID
+        - templateName
+        - barcodeLocation
+      properties:
+        clientID:
+          type: integer
+          description: Unique identifier for the session.
+          example: 1619662600769
+        templateName:
+          type: string
+          description: Name of the template to save.
+          example: InvoiceBarcode
+        isEditting:
+          type: boolean
+          description: Set to true when updating an existing template.
+          example: false
+        barcodeLocation:
+          $ref: '#/components/schemas/Location'
+
+    BaseRegionTemplateRequest:
+      type: object
+      description: Request body for DELETE /DeleteBarcodeTemplate.
+      required:
+        - clientID
+        - templateName
+      properties:
+        clientID:
+          type: integer
+          description: Unique identifier for the session.
+          example: 1619662600769
+        templateName:
+          type: string
+          description: Name of the template to delete.
+          example: InvoiceBarcode
+
+    BarcodeTemplateResponse:
+      type: object
+      description: Response from GET /GetBarcodeTemplate.
+      properties:
+        templateName:
+          type: string
+          description: Name of the template.
+          example: InvoiceBarcode
+        location:
+          $ref: '#/components/schemas/Location'
+
+    # -------------------------------------------------------------------------
+    # Barcode Enumerations
+    # -------------------------------------------------------------------------
+
+    BarcodeLocation:
+      type: integer
+      description: >-
+        Specifies where the barcode separator is placed relative to the document
+        pages.<br/>
+        0: BarcodeOnCoverSheet – barcode appears on a dedicated cover/separator
+        sheet preceding the document pages.<br/>
+        1: BarcodeOnDocument – barcode appears on the document pages themselves.
+      enum:
+        - 0
+        - 1
+
+    BarcodeFormat:
+      type: integer
+      description: >-
+        Specifies the barcode symbology to detect.<br/>
+        0: Default – auto-detect all supported formats.
+      enum:
+        - 0
+
+    BarcodeOrientation:
+      type: integer
+      description: >-
+        Specifies the reading direction of the barcode.<br/>
+        0: LeftToRight – no rotation needed.<br/>
+        1: TopToBottom – 90° rotation.<br/>
+        2: RightToLeft – 180° rotation.<br/>
+        3: BottomToTop – 270° rotation.
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
