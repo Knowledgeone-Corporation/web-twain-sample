@@ -277,6 +277,8 @@ When pages contain **multiple barcodes**, you must call `ApplyBarcodeSelection` 
 Barcode templates define a restricted scan region on the page. This improves recognition accuracy and speed when barcodes always appear in the same location.
 
 #### Search Fallback
+In the sample UI this is the **Search entire page if barcode is not found at the template location** checkbox in the template selection popup. It is checked by default and pre-filled from the selected template.
+
 When a barcode is not found at the template location, `searchEntirePage` decides what happens next:
 
 | `searchEntirePage` | Behaviour |
