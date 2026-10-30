@@ -909,6 +909,21 @@ button.k1ss-add-template.k1ss-button.k1ss-okconfimbutton {
     color: red;
 }
 
+.k1ss-barcode-search-option {
+    margin: 0px 0px 5px 5px;
+}
+
+.k1ss-barcode-search-option label {
+    margin-left: 5px;
+    font-weight: normal;
+}
+
+.k1ss-barcode-search-hint {
+    margin-left: 25px;
+    font-size: 12px;
+    color: #777;
+}
+
 .k1ss-focus-radio-input {
     outline: 2px solid blue;
 }

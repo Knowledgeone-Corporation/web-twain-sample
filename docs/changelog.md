@@ -1,5 +1,12 @@
 ## Knowledgeone WebTWAIN Release Notes
 
+## Version 3.1.1
+- **Barcode Recognition**: Barcode templates now control what happens when a barcode is not found at the template location.
+  - New **Search entire page if barcode is not found at the template location** option, available when selecting a template. It is enabled by default, which keeps the existing behaviour.
+  - When the option is disabled, the whole page is not searched. The template area is expanded (10% by default) and searched once more.
+  - The expansion percentage can be changed with the optional `BarcodeSearchExpansionPercent` setting (Windows `App.config`) or `BarcodeSettings:SearchExpansionPercent` (macOS `appsettings.json`).
+  - The option and the barcode location (cover sheet or document) are stored with the template and pre-filled when the template is selected. Existing templates are treated as having the option enabled.
+
 ## Version 3.1.0
 - Introduces support for compressing scanned pages to reduce file size. Users can select from multiple compression levels:  
   - **None**: Produces the highest quality output with larger file size.  

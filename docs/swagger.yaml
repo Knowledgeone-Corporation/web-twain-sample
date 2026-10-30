@@ -1202,6 +1202,16 @@ components:
             Name of a saved barcode template that restricts recognition to a
             defined region. Leave empty to search the full page.
           example: ""
+        searchEntirePage:
+          type: boolean
+          default: true
+          description: >-
+            Applies only when templateId is set. When true, the entire page is
+            searched if the barcode is not found at the template location. When
+            false, the entire page is never searched; the template region is
+            expanded (10% by default) and searched once more. The value is
+            stored with the template.
+          example: true
 
     ApplyBarcodeSelectionRequest:
       type: object
@@ -1435,6 +1445,22 @@ components:
           example: InvoiceBarcode
         location:
           $ref: '#/components/schemas/Location'
+        searchEntirePage:
+          type: boolean
+          default: true
+          description: >-
+            Whether the entire page is searched when the barcode is not found at
+            the template location. Templates created before version 3.1.1 return
+            true.
+          example: true
+        barcodeLocationType:
+          type: integer
+          enum: [0, 1]
+          nullable: true
+          description: >-
+            Barcode location stored with the template: 0 = cover sheet,
+            1 = document. Omitted if never stored.
+          example: 0
 
     # -------------------------------------------------------------------------
     # Barcode Enumerations
