@@ -178,7 +178,8 @@ Call `RecognizeBarcode` with the [BarcodeLocation](#barcodelocation) and an opti
 {
     "clientID": 1619662600769,
     "BarcodeLocation": 0,
-    "templateId": ""
+    "templateId": "",
+    "searchEntirePage": true
 }
 ```
 
@@ -187,6 +188,7 @@ Call `RecognizeBarcode` with the [BarcodeLocation](#barcodelocation) and an opti
 | `clientID` | integer | ✔ | Unique session identifier |
 | `BarcodeLocation` | [BarcodeLocation](#barcodelocation) | | Where the barcode sits relative to the document pages (default: `0` – `BarcodeOnCoverSheet`) |
 | `templateId` | string | | Name of a saved [barcode template](#optional--barcode-templates) to constrain the scan region; leave empty to search the full page |
+| `searchEntirePage` | boolean | | Applies only when `templateId` is set. `true` (default) searches the entire page if the barcode is not found at the template location. `false` never searches the entire page; the template region is expanded instead (see [Search Fallback](#search-fallback)). The value sent here is stored with the template |
 
 **Poll for recognition result:**  
 `GET /GetBarcodeRecognizingProgress?clientID={clientID}`
@@ -273,6 +275,27 @@ When pages contain **multiple barcodes**, you must call `ApplyBarcodeSelection` 
 ### Optional – Barcode Templates
 
 Barcode templates define a restricted scan region on the page. This improves recognition accuracy and speed when barcodes always appear in the same location.
+
+#### Search Fallback
+In the sample UI this is the **Search entire page if barcode is not found at the template location** checkbox in the template selection popup. It is checked by default and pre-filled from the selected template.
+
+When a barcode is not found at the template location, `searchEntirePage` decides what happens next:
+
+| `searchEntirePage` | Behaviour |
+|---|---|
+| `true` (default) | The entire page is searched. This is the behaviour of templates created before version 3.1.1. |
+| `false` | The entire page is not searched. The template region is expanded by a percentage (10% by default) and searched once more. |
+
+The expansion percentage is optional and configured on the service:
+
+| Platform | File | Setting | Default |
+|---|---|---|---|
+| Windows | `K1ScanService.exe.config` | `BarcodeSearchExpansionPercent` | `10` |
+| macOS | `appsettings.json` | `BarcodeSettings:SearchExpansionPercent` | `10` |
+
+A missing, non-numeric or non-positive value falls back to `10`.
+
+The option and the [BarcodeLocation](#barcodelocation) are stored with the template. `RecognizeBarcode` updates them when the values sent differ from the stored ones, and `GetBarcodeTemplate` returns them so a UI can pre-fill its controls. Templates saved before version 3.1.1 return `searchEntirePage: true` and no `barcodeLocationType`.
 
 #### List Templates
 `GET /GetListBarcodeTemplates?clientID={clientID}`  
@@ -443,7 +466,9 @@ If automatic recognition fails or the user can manually enter/select barcodes, u
         locationY: 5.0,
         width: 300.0,
         height: 80.0
-    }
+    },
+    searchEntirePage: true,     // false = expand the template region instead of searching the entire page
+    barcodeLocationType: 0      // 0 = cover sheet, 1 = document; omitted if never stored with the template
 }
 ```
 

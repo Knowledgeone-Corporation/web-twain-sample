@@ -1,5 +1,8 @@
 ## Knowledgeone WebTWAIN Release Notes
 
+## Version 3.1.1
+- **Barcode Recognition**: Added an option for barcode templates to skip the entire-page search when a barcode is not found at the template location. Enabled by default, so existing behaviour is unchanged. See [Barcode Recognition](reference/barcode_recognition.md#search-fallback).
+
 ## Version 3.1.0
 - Introduces support for compressing scanned pages to reduce file size. Users can select from multiple compression levels:  
   - **None**: Produces the highest quality output with larger file size.  
